@@ -7,12 +7,15 @@ import (
 
 type Vector struct {
 	vector.Vector
+	cp ClientParser
+	dp DeviceParser
 }
 
 // NewVector makes new parser.
 func NewVector() *Vector {
 	vec := &Vector{}
 	vec.Helper = uaHelper
+	vec.cp, vec.dp = ClientParserAll, DeviceParserAll
 	return vec
 }
 
@@ -34,4 +37,19 @@ func (vec *Vector) ParseCopy(s []byte) error {
 // ParseCopyStr makes a copy of source string and parse it.
 func (vec *Vector) ParseCopyStr(s string) error {
 	return vec.parse(fastconv.S2B(s), true)
+}
+
+func (vec *Vector) SetClientParser(mask ClientParser) *Vector {
+	vec.cp = mask
+	return vec
+}
+
+func (vec *Vector) SetDeviceParser(mask DeviceParser) *Vector {
+	vec.dp = mask
+	return vec
+}
+
+func (vec *Vector) Reset() {
+	vec.Vector.Reset()
+	vec.cp, vec.dp = ClientParserAll, DeviceParserAll
 }
