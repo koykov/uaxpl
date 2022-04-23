@@ -69,7 +69,7 @@ func main() {
 		w.WriteString(os.Args[i])
 	}
 	_, _ = w.WriteString("\". DO NOT EDIT.\n\n")
-	_, _ = w.WriteString("package uavector\n\n")
+	_, _ = w.WriteString("package uaxpl\n\n")
 
 	mod = mods[fmod]
 	log.Printf("%s compilation started\n", fmod)

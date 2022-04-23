@@ -3,10 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
+	"go/format"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/koykov/entry"
 	"gopkg.in/yaml.v2"
@@ -39,11 +42,30 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 	if len(target) == 0 {
 		target = "client_repo.go"
 	}
+
+	hd, _ := os.UserHomeDir()
+	input = strings.ReplaceAll(input, "~", hd)
+
 	files, err := filepath.Glob(input + "/*.yml")
 	if err != nil {
 		return err
 	}
+
+	var (
+		bufCR []string
+		bufRE []string
+		bufEF []string
+		buf   buf
+	)
+
+	_, _ = w.WriteString("import (\n\"github.com/koykov/entry\"\n\"regexp\"\n)\n\n")
+	_, _ = w.WriteString("var (\n")
+
+	_, _ = w.WriteString("__cr_idx = [" + strconv.Itoa(len(files)) + "][]cr{\n")
+
 	for i := 0; i < len(files); i++ {
+		bufCR = bufCR[:0]
+
 		var body []byte
 		if body, err = ioutil.ReadFile(files[i]); err != nil {
 			return
@@ -57,12 +79,6 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 		if err = yaml.Unmarshal(body, &tuples); err != nil {
 			return
 		}
-
-		var (
-			bufRE []string
-			bufEF []string
-			buf   buf
-		)
 
 		for j := 0; j < len(tuples); j++ {
 			tuple := tuples[j]
@@ -79,7 +95,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			rs := tuple.Regex
 			if !isRegex(rs) {
 				si = buf.add(tuple.Regex)
-			} else if _, err := regexp.Compile(normalizeRegex(rs)); err != nil {
+			} else if _, err = regexp.Compile(normalizeRegex(rs)); err == nil {
 				bufRE = append(bufRE, tuple.Regex)
 				re = int32(len(bufRE) - 1)
 			}
@@ -106,10 +122,50 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				tp = buf.add(tuple.Type)
 			}
 
-			_, _, _, _, _, _, _ = re, si, vi, ed, ef, ul, tp
+			bufCR = append(bufCR, fmt.Sprintf("cr{re:%s,si:%s,vi:%s,ed:%s,ef:%s,ul:%s,tp:%s},",
+				hex(re), hex(si), hex(vi), hex(ed), hex(ef), hex(ul), hex(tp)))
 		}
-		_ = bufEF
+
+		_, _ = w.WriteString("{\n")
+		for j := 0; j < len(bufCR); j++ {
+			_, _ = w.WriteString(bufCR[j])
+			_ = w.WriteByte('\n')
+		}
+		_, _ = w.WriteString("},\n")
+	}
+	_, _ = w.WriteString("}\n")
+
+	_, _ = w.WriteString("__cr_re = []*regexp.Regexp{\n")
+	for i := 0; i < len(bufRE); i++ {
+		_, _ = w.WriteString("regexp.MustCompile(`" + bufRE[i] + "`),\n")
+	}
+	_, _ = w.WriteString("}\n")
+
+	_, _ = w.WriteString("__cr_ef = []engFn{\n")
+	for i := 0; i < len(bufEF); i++ {
+		_, _ = w.WriteString(bufEF[i])
+		_, _ = w.WriteString(",\n")
+	}
+	_, _ = w.WriteString("}\n")
+
+	_, _ = w.WriteString("__cr_buf = []byte{\n")
+	for i := 0; i < len(buf.buf); i++ {
+		if i > 0 && i%16 == 0 {
+			_ = w.WriteByte('\n')
+		}
+		_, _ = w.WriteString(fmt.Sprintf("0x%02x, ", buf.buf[i]))
+	}
+	_, _ = w.WriteString("\n}\n")
+
+	_, _ = w.WriteString(")\n")
+
+	source := w.Bytes()
+	var fmtSource []byte
+	if fmtSource, err = format.Source(source); err != nil {
+		return
 	}
 
-	return nil
+	err = ioutil.WriteFile(target, fmtSource, 0644)
+
+	return
 }

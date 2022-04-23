@@ -11,6 +11,9 @@ func (b *buf) add(s string) entry.Entry64 {
 	if e, ok := b.idx[s]; ok {
 		return e
 	}
+	if b.idx == nil {
+		b.idx = make(map[string]entry.Entry64)
+	}
 	var e entry.Entry64
 	lo := uint32(len(b.buf))
 	b.buf = append(b.buf, s...)

@@ -1,4 +1,4 @@
-module github.com/koykov/uavector/cmd/uavectorc
+module github.com/koykov/uaxpl/cmd/uaxplc
 
 go 1.16
 
