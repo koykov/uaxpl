@@ -1,4 +1,4 @@
-module github.com/koykov/uavector
+module github.com/koykov/uaxpl
 
 go 1.16
 

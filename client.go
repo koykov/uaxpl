@@ -1,4 +1,8 @@
-package uavector
+package uaxpl
+
+import (
+	"github.com/koykov/entry"
+)
 
 type ClientParser uint8
 

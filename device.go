@@ -1,4 +1,4 @@
-package uavector
+package uaxpl
 
 type DeviceParser uint8
 

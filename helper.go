@@ -1,4 +1,4 @@
-package uavector
+package uaxpl
 
 import (
 	"github.com/koykov/vector"

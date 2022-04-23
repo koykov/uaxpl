@@ -1,4 +1,4 @@
-package uavector
+package uaxpl
 
 import "sync"
 
@@ -8,7 +8,7 @@ type Pool struct {
 
 var (
 	// P is a default instance of the pool.
-	// Just call uavector.Acquire() and uavector.Release().
+	// Just call uaxpl.Acquire() and uaxpl.Release().
 	P Pool
 	// Suppress go vet warnings.
 	_, _ = Acquire, Release
