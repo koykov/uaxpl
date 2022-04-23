@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
+	"strconv"
 
+	"github.com/koykov/entry"
 	"gopkg.in/yaml.v2"
 )
 
@@ -55,9 +58,57 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			return
 		}
 
+		var (
+			bufRE []string
+			bufEF []string
+			buf   buf
+		)
+
 		for j := 0; j < len(tuples); j++ {
-			fmt.Println(tuples[j].Regex)
+			tuple := tuples[j]
+			var (
+				re = int32(-1)   // regex index
+				si entry.Entry64 // string index
+				vi = int8(-1)    // version index
+				ed entry.Entry64 // default engine
+				ef = int32(-1)   // engine func index
+				ul entry.Entry64 // url
+				tp entry.Entry64 // type string
+			)
+
+			rs := tuple.Regex
+			if !isRegex(rs) {
+				si = buf.add(tuple.Regex)
+			} else if _, err := regexp.Compile(normalizeRegex(rs)); err != nil {
+				bufRE = append(bufRE, tuple.Regex)
+				re = int32(len(bufRE) - 1)
+			}
+			if len(tuple.Version) > 0 && tuple.Version[0] == '$' {
+				n, _ := strconv.Atoi(tuple.Version[1:])
+				vi = int8(n)
+			}
+
+			if tuple.Engine != nil {
+				if len(tuple.Engine.Default) > 0 {
+					ed = buf.add(tuple.Engine.Default)
+				}
+				if len(tuple.Engine.Versions) > 0 {
+					fn := "func(s string, def entry.Entry64) entry.Entry64 { return def }"
+					bufEF = append(bufEF, fn)
+					ef = int32(len(bufEF) - 1)
+				}
+			}
+
+			if len(tuple.URL) > 0 {
+				ul = buf.add(tuple.URL)
+			}
+			if len(tuple.Type) > 0 {
+				tp = buf.add(tuple.Type)
+			}
+
+			_, _, _, _, _, _, _ = re, si, vi, ed, ef, ul, tp
 		}
+		_ = bufEF
 	}
 
 	return nil
