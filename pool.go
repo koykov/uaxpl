@@ -14,30 +14,29 @@ var (
 	_, _ = Acquire, Release
 )
 
-// Get old vector from the pool or create new one.
-func (p *Pool) Get() *Vector {
+// Get old context from the pool or create new one.
+func (p *Pool) Get() *Ctx {
 	v := p.p.Get()
 	if v != nil {
-		if vec, ok := v.(*Vector); ok {
-			vec.Helper = uaHelper
-			return vec
+		if ctx, ok := v.(*Ctx); ok {
+			return ctx
 		}
 	}
-	return NewVector()
+	return NewCtx()
 }
 
-// Put vector back to the pool.
-func (p *Pool) Put(vec *Vector) {
-	vec.Reset()
-	p.p.Put(vec)
+// Put context back to the pool.
+func (p *Pool) Put(ctx *Ctx) {
+	ctx.Reset()
+	p.p.Put(ctx)
 }
 
-// Acquire gets vector from default pool instance.
-func Acquire() *Vector {
+// Acquire gets context from default pool instance.
+func Acquire() *Ctx {
 	return P.Get()
 }
 
-// Release puts vector back to default pool instance.
-func Release(vec *Vector) {
+// Release puts context back to default pool instance.
+func Release(vec *Ctx) {
 	P.Put(vec)
 }
