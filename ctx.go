@@ -15,6 +15,16 @@ func NewCtx() *Ctx {
 	return &ctx
 }
 
+func (c *Ctx) SetUserAgent(src []byte) *Ctx {
+	c.src = append(c.src[:0], src...)
+	return c
+}
+
+func (c *Ctx) SetUserAgentStr(src string) *Ctx {
+	c.src = append(c.src[:0], src...)
+	return c
+}
+
 func (c *Ctx) FilterClientType(mask ClientType) *Ctx {
 	c.ctm = mask
 	return c
