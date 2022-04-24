@@ -4,17 +4,17 @@ import (
 	"github.com/koykov/entry"
 )
 
-type ClientParser uint8
+type ClientType uint8
 
 const (
-	ClientParserFeedReader ClientParser = 1 << iota
-	ClientParserMobileApp
-	ClientParserMediaPlayer
-	ClientParserPIM
-	ClientParserBrowser
-	ClientParserLibrary
-	ClientParserAll = ClientParserFeedReader | ClientParserMobileApp | ClientParserMediaPlayer | ClientParserPIM |
-		ClientParserBrowser | ClientParserLibrary
+	ClientTypeBrowser ClientType = 1 << iota
+	ClientTypeMobileApp
+	ClientTypeLibrary
+	ClientTypeFeedReader
+	ClientTypeMediaPlayer
+	ClientTypePIM
+	ClientTypeAll = ClientTypeBrowser | ClientTypeMobileApp | ClientTypeLibrary | ClientTypeFeedReader |
+		ClientTypeMediaPlayer | ClientTypePIM
 )
 
 type engFn func(string) entry.Entry64

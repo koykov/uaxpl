@@ -1,16 +1,16 @@
 package uaxpl
 
-type DeviceParser uint8
+type DeviceType uint8
 
 const (
-	DeviceParserHbbTV DeviceParser = 1 << iota
-	DeviceParserShellTV
-	DeviceParserNotebook
-	DeviceParserConsole
-	DeviceParserCarBrowser
-	DeviceParserCamera
-	DeviceParserPortableMediaPlayer
-	DeviceParserMobile
-	DeviceParserAll = DeviceParserHbbTV | DeviceParserShellTV | DeviceParserNotebook | DeviceParserConsole |
-		DeviceParserCarBrowser | DeviceParserCamera | DeviceParserPortableMediaPlayer | DeviceParserMobile
+	DeviceTypeNotebook DeviceType = 1 << iota
+	DeviceTypeMobile
+	DeviceTypeConsole
+	DeviceTypeHbbTV
+	DeviceTypeShellTV
+	DeviceTypeCamera
+	DeviceTypeCarBrowser
+	DeviceTypePortableMediaPlayer
+	DeviceTypeAll = DeviceTypeHbbTV | DeviceTypeShellTV | DeviceTypeNotebook | DeviceTypeConsole |
+		DeviceTypeCarBrowser | DeviceTypeCamera | DeviceTypePortableMediaPlayer | DeviceTypeMobile
 )
