@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -109,7 +110,8 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 					ed = buf.add(tuple.Engine.Default)
 				}
 				if len(tuple.Engine.Versions) > 0 {
-					fn := "func(s string, def entry.Entry64) entry.Entry64 { return def }"
+					// fn := "func(s string, def entry.Entry64) entry.Entry64 { return def }"
+					fn := m.ef(tuple.Engine, ed, &buf)
 					bufEF = append(bufEF, fn)
 					ef = int32(len(bufEF) - 1)
 				}
@@ -167,5 +169,29 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 
 	err = ioutil.WriteFile(target, fmtSource, 0644)
 
+	return
+}
+
+func (m clientModule) ef(e *ClientEngine, def entry.Entry64, buf *buf) (out string) {
+	type ve struct {
+		v string
+		e string
+	}
+	var bufVE []ve
+	for v, e := range e.Versions {
+		bufVE = append(bufVE, ve{v: v, e: e})
+	}
+	sort.Slice(bufVE, func(i, j int) bool {
+		return bufVE[i].v < bufVE[j].v
+	})
+	out += "func(s string) entry.Entry64 {\n"
+	out += "switch s {\n"
+	for i := 0; i < len(bufVE); i++ {
+		x := &bufVE[i]
+		e1 := buf.add(x.e)
+		out += "case \"" + x.v + "\":\nreturn " + fmt.Sprintf("0x%08x", e1) + "\n"
+	}
+	out += "default:\nreturn " + fmt.Sprintf("0x%08x", def) + "\n"
+	out += "}\n}"
 	return
 }

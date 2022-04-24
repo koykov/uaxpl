@@ -17,7 +17,7 @@ const (
 		ClientParserBrowser | ClientParserLibrary
 )
 
-type engFn func(string, entry.Entry64) entry.Entry64
+type engFn func(string) entry.Entry64
 
 type cr struct {
 	re int32         // regex index
