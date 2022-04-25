@@ -22,6 +22,7 @@ type engFn func(string) entry.Entry64
 type cr struct {
 	re int32         // regex index
 	si entry.Entry64 // string index
+	be entry.Entry64 // browser name index
 	vi int8          // version index
 	ed entry.Entry64 // default engine
 	ef int32         // engine func index

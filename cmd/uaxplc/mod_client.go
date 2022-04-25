@@ -87,6 +87,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				re = int32(-1)   // regex index
 				si entry.Entry64 // string index
 				vi = int8(-1)    // version index
+				be entry.Entry64 // browser name index
 				ed entry.Entry64 // default engine
 				ef = int32(-1)   // engine func index
 				ul entry.Entry64 // url
@@ -103,6 +104,9 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 					re = int32(len(bufRE) - 1)
 				}
 			}
+			if len(tuple.Name) > 0 {
+				be = buf.add(tuple.Name)
+			}
 			if len(tuple.Version) > 0 && tuple.Version[0] == '$' {
 				n, _ := strconv.Atoi(tuple.Version[1:])
 				vi = int8(n)
@@ -113,7 +117,6 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 					ed = buf.add(tuple.Engine.Default)
 				}
 				if len(tuple.Engine.Versions) > 0 {
-					// fn := "func(s string, def entry.Entry64) entry.Entry64 { return def }"
 					fn := m.ef(tuple.Engine, ed, &buf)
 					bufEF = append(bufEF, fn)
 					ef = int32(len(bufEF) - 1)
@@ -127,8 +130,8 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				tp = buf.add(tuple.Type)
 			}
 
-			bufCR = append(bufCR, fmt.Sprintf("cr{re:%s,si:%s,vi:%s,ed:%s,ef:%s,ul:%s,tp:%s},",
-				hex(re), hex(si), hex(vi), hex(ed), hex(ef), hex(ul), hex(tp)))
+			bufCR = append(bufCR, fmt.Sprintf("cr{re:%s,si:%s,be:%s,vi:%s,ed:%s,ef:%s,ul:%s,tp:%s},",
+				hex(re), hex(si), hex(be), hex(vi), hex(ed), hex(ef), hex(ul), hex(tp)))
 		}
 
 		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")
