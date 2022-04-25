@@ -1237,7 +1237,7 @@ var (
 		regexp.MustCompile(`Elinks(?:/(\d+[\.\d]+))?`),
 		regexp.MustCompile(`Element Browser(?:[ /](\d+[\.\d]+))?`),
 		regexp.MustCompile(`eZBrowser(?:/(\d+[\.\d]+))?`),
-		regexp.MustCompile(`Firebird(?:! Build)(?:/(\d+[\.\d]+))?`),
+		regexp.MustCompile(`Firebird(?:! Patch)(?:/(\d+[\.\d]+))?`),
 		regexp.MustCompile(`Fluid(?:/(\d+[\.\d]+))?`),
 		regexp.MustCompile(`Galeon(?:/(\d+[\.\d]+))?`),
 		regexp.MustCompile(`(?:Google Earth Pro|Google%20Earth%20Pro)(?:/(\d+[\.\d]+))?`),

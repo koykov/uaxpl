@@ -13,3 +13,9 @@ func assertStr(tb testing.TB, stage, a, b string) {
 		tb.Errorf("%s mismatch: need '%s' got '%s'", stage, b, a)
 	}
 }
+
+func assertInt32(tb testing.TB, stage string, a, b int32) {
+	if a != b {
+		tb.Errorf("%s mismatch: need %d got %d", stage, b, a)
+	}
+}

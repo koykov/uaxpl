@@ -17,14 +17,16 @@ type Ctx struct {
 	bitset.Bitset
 	src []byte
 
-	ct ClientType
-	dt DeviceType
-
-	be entry.Entry64
-	ve entry.Entry64
-
 	ctm ClientType
 	dtm DeviceType
+
+	ct  ClientType
+	cne entry.Entry64
+	cve entry.Entry64
+	cv  Version
+
+	dt DeviceType
+	// ...
 }
 
 func NewCtx() *Ctx {
@@ -63,19 +65,27 @@ func (c *Ctx) GetBrowser() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	if c.be > 0 {
-		lo, hi := c.be.Decode()
+	if c.cne > 0 {
+		lo, hi := c.cne.Decode()
 		return fastconv.B2S(__cr_buf[lo:hi])
 	}
 	return Unknown
+}
+
+func (c *Ctx) GetBrowserVersion() *Version {
+	if !c.cv.p {
+		raw := c.GetBrowserVersionString()
+		_ = c.cv.Parse(raw)
+	}
+	return &c.cv
 }
 
 func (c *Ctx) GetBrowserVersionString() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	if c.ve > 0 {
-		lo, hi := c.ve.Decode()
+	if c.cve > 0 {
+		lo, hi := c.cve.Decode()
 		return fastconv.B2S(c.src[lo:hi])
 	}
 	return Unknown
@@ -97,6 +107,6 @@ func (c *Ctx) Reset() {
 func (c *Ctx) reset() {
 	c.Bitset.Reset()
 	c.src = c.src[:0]
-	c.be.Reset()
-	c.ve.Reset()
+	c.cne.Reset()
+	c.cve.Reset()
 }

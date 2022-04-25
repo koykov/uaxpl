@@ -74,7 +74,7 @@ func (c *Ctx) evalClient(idx int) bool {
 				if x.vi != -1 {
 					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.vi) {
 						lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
-						c.ve.Encode(lo, hi)
+						c.cve.Encode(lo, hi)
 					}
 				}
 				break
@@ -90,7 +90,7 @@ func (c *Ctx) evalClient(idx int) bool {
 	}
 
 	if x != nil {
-		c.be = x.be
+		c.cne = x.be
 		return true
 	}
 	return false
