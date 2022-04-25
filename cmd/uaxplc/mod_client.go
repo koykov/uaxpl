@@ -96,9 +96,12 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			rs := tuple.Regex
 			if !isRegex(rs) {
 				si = buf.add(tuple.Regex)
-			} else if _, err = regexp.Compile(normalizeRegex(rs)); err == nil {
-				bufRE = append(bufRE, tuple.Regex)
-				re = int32(len(bufRE) - 1)
+			} else {
+				rs = normalizeRegex(rs)
+				if _, err = regexp.Compile(rs); err == nil {
+					bufRE = append(bufRE, rs)
+					re = int32(len(bufRE) - 1)
+				}
 			}
 			if len(tuple.Version) > 0 && tuple.Version[0] == '$' {
 				n, _ := strconv.Atoi(tuple.Version[1:])
@@ -128,6 +131,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				hex(re), hex(si), hex(vi), hex(ed), hex(ef), hex(ul), hex(tp)))
 		}
 
+		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")
 		_, _ = w.WriteString("{\n")
 		for j := 0; j < len(bufCR); j++ {
 			_, _ = w.WriteString(bufCR[j])
