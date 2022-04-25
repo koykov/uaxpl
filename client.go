@@ -29,3 +29,22 @@ type cr struct {
 	ul entry.Entry64 // url
 	tp entry.Entry64 // type string
 }
+
+func (t ClientType) String() string {
+	switch t {
+	case ClientTypeBrowser:
+		return "browser"
+	case ClientTypeMobileApp:
+		return "mobile app"
+	case ClientTypeLibrary:
+		return "library"
+	case ClientTypeFeedReader:
+		return "feed reader"
+	case ClientTypeMediaPlayer:
+		return "mediaplayer"
+	case ClientTypePIM:
+		return "pim"
+	default:
+		return Unknown
+	}
+}

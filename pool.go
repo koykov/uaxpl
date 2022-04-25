@@ -37,6 +37,6 @@ func Acquire() *Ctx {
 }
 
 // Release puts context back to default pool instance.
-func Release(vec *Ctx) {
-	P.Put(vec)
+func Release(ctx *Ctx) {
+	P.Put(ctx)
 }
