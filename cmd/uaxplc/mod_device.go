@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/format"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -104,6 +105,8 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 			ne = buf.add(brand.Name)
 
 			rs := brand.Regex
+			rsCpy := rs
+			_ = rsCpy
 			if !isRegex(rs) {
 				si = buf.add(brand.Regex)
 			} else {
@@ -111,6 +114,8 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 				if _, err = regexp.Compile(rs); err == nil {
 					bufRE = append(bufRE, rs)
 					re = int32(len(bufRE) - 1)
+				} else {
+					// log.Printf("regexp error '%s' on '%s'", err, rs)
 				}
 			}
 
@@ -127,10 +132,12 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 					if !isRegex(rs1) {
 						si1 = buf.add(model.Regex)
 					} else {
-						rs = normalizeRegex(rs1)
+						rs1 = normalizeRegex(rs1)
 						if _, err = regexp.Compile(rs1); err == nil {
 							bufRE = append(bufRE, rs1)
 							re1 = int32(len(bufRE) - 1)
+						} else {
+							log.Printf("regexp error '%s' on '%s'", err, rs)
 						}
 					}
 					ne1 = buf.add(model.Model)
@@ -169,7 +176,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 
 	_, _ = w.WriteString("__dr_re = []*regexp.Regexp{\n")
 	for i := 0; i < len(bufRE); i++ {
-		_, _ = w.WriteString("regexp.MustCompile(`" + bufRE[i] + "`),\n")
+		_, _ = w.WriteString("regexp.MustCompile(`(?i)" + bufRE[i] + "`),\n")
 	}
 	_, _ = w.WriteString("}\n")
 

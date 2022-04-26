@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/format"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -102,6 +103,8 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				if _, err = regexp.Compile(rs); err == nil {
 					bufRE = append(bufRE, rs)
 					re = int32(len(bufRE) - 1)
+				} else {
+					log.Printf("regexp error '%s' on '%s'", err, rs)
 				}
 			}
 			if len(tuple.Name) > 0 {
@@ -146,7 +149,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 
 	_, _ = w.WriteString("__cr_re = []*regexp.Regexp{\n")
 	for i := 0; i < len(bufRE); i++ {
-		_, _ = w.WriteString("regexp.MustCompile(`" + bufRE[i] + "`),\n")
+		_, _ = w.WriteString("regexp.MustCompile(`(?i)" + bufRE[i] + "`),\n")
 	}
 	_, _ = w.WriteString("}\n")
 
