@@ -27,6 +27,8 @@ func hex(x interface{}) string {
 		} else {
 			return fmt.Sprintf("0x%04x", i)
 		}
+	case uint64:
+		return fmt.Sprintf("0x%08x", x.(uint64))
 	case entry.Entry64:
 		return fmt.Sprintf("0x%08x", x.(entry.Entry64))
 	}

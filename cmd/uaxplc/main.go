@@ -19,6 +19,7 @@ var (
 	fmod, fin, ftrg string
 
 	mods = map[string]module{
+		"hint":   hintModule{},
 		"client": clientModule{},
 		"device": deviceModule{},
 		"os":     osModule{},
