@@ -1,6 +1,24 @@
 package uaxpl
 
-import "testing"
+import (
+	"encoding/json"
+	"os"
+	"strconv"
+	"testing"
+)
+
+type dsBrowser struct {
+	UA     string `json:"user_agent"`
+	Client struct {
+		Type          string `json:"type"`
+		Name          string `json:"name"`
+		Version       string `json:"version"`
+		Engine        string `json:"engine"`
+		EngineVersion string `json:"engine_version"`
+		Family        string `json:"family"`
+	} `json:"client"`
+	Headers map[string]string
+}
 
 func TestClientParse(t *testing.T) {
 	t.Run("single/browser", func(t *testing.T) {
@@ -10,6 +28,31 @@ func TestClientParse(t *testing.T) {
 		assertStr(t, "browser", ctx.GetBrowser(), "Yandex Browser Lite")
 		assertStr(t, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130")
 	})
+
+	var ds []dsBrowser
+	contents, err := os.ReadFile("dataset/browser.json")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if err = json.Unmarshal(contents, &ds); err != nil {
+		t.Error(err)
+		return
+	}
+	for i := 0; i < len(ds); i++ {
+		stage := &ds[i]
+		t.Run("dataset/browser"+strconv.Itoa(i), func(t *testing.T) {
+			ctx := AcquireWithSrcStr(stage.UA)
+			if rwh, ok := stage.Headers["http-x-requested-with"]; ok {
+				ctx.SetRequestedWith(rwh)
+			}
+			assertCVS(t, ctx.GetClientType(), ClientTypeBrowser)
+			if !assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name) {
+				t.Log("->", stage.UA)
+			}
+			Release(ctx)
+		})
+	}
 }
 
 func BenchmarkClientParse(b *testing.B) {

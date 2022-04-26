@@ -8,12 +8,12 @@ const (
 	DeviceTypeNotebook DeviceType = 1 << iota
 	DeviceTypeMobile
 	DeviceTypeConsole
-	DeviceTypeHbbTV
+	DeviceTypeTV
 	DeviceTypeShellTV
 	DeviceTypeCamera
 	DeviceTypeCarBrowser
 	DeviceTypePortableMediaPlayer
-	DeviceTypeAll = DeviceTypeHbbTV | DeviceTypeShellTV | DeviceTypeNotebook | DeviceTypeConsole |
+	DeviceTypeAll = DeviceTypeTV | DeviceTypeShellTV | DeviceTypeNotebook | DeviceTypeConsole |
 		DeviceTypeCarBrowser | DeviceTypeCamera | DeviceTypePortableMediaPlayer | DeviceTypeMobile
 )
 
@@ -29,4 +29,25 @@ type dm struct {
 	re int32         // regex index
 	si entry.Entry64 // string index
 	ne entry.Entry64 // model name index
+}
+
+func (t DeviceType) String() string {
+	switch t {
+	case DeviceTypeMobile:
+		return "smartphone"
+	case DeviceTypeConsole:
+		return "console"
+	case DeviceTypeTV:
+		return "tv"
+	case DeviceTypeShellTV:
+		return "tv"
+	case DeviceTypeCamera:
+		return "camera"
+	case DeviceTypeCarBrowser:
+		return "car browser"
+	case DeviceTypePortableMediaPlayer:
+		return "portable media player"
+	default:
+		return Unknown
+	}
 }
