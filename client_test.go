@@ -30,7 +30,7 @@ func TestClientParse(t *testing.T) {
 	})
 
 	var ds []dsBrowser
-	contents, err := os.ReadFile("dataset/browser.json")
+	contents, err := os.ReadFile("testdata/browser.json")
 	if err != nil {
 		t.Error(err)
 		return
