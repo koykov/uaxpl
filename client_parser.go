@@ -15,6 +15,13 @@ const (
 )
 
 func (c *Ctx) parseClient() bool {
+	if c.ctm&ClientTypeBrowser != 0 {
+		if c.evalClient(cpBrowser) {
+			c.SetBit(flagClientDetect, true)
+			c.ct = ClientTypeBrowser
+			return true
+		}
+	}
 	if c.ctm&ClientTypeFeedReader != 0 {
 		if c.evalClient(cpFeedReader) {
 			c.SetBit(flagClientDetect, true)
@@ -40,13 +47,6 @@ func (c *Ctx) parseClient() bool {
 		if c.evalClient(cpPIM) {
 			c.SetBit(flagClientDetect, true)
 			c.ct = ClientTypePIM
-			return true
-		}
-	}
-	if c.ctm&ClientTypeBrowser != 0 {
-		if c.evalClient(cpBrowser) {
-			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeBrowser
 			return true
 		}
 	}
