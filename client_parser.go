@@ -15,10 +15,10 @@ const (
 )
 
 func (c *Ctx) parseClient() bool {
-	if c.ctm&ClientTypeBrowser != 0 {
-		if c.evalClient(cpBrowser) {
+	if c.ctm&ClientTypeFeedReader != 0 {
+		if c.evalClient(cpFeedReader) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeBrowser
+			c.ct = ClientTypeFeedReader
 			return true
 		}
 	}
@@ -26,20 +26,6 @@ func (c *Ctx) parseClient() bool {
 		if c.evalClient(cpMobileApp) {
 			c.SetBit(flagClientDetect, true)
 			c.ct = ClientTypeMobileApp
-			return true
-		}
-	}
-	if c.ctm&ClientTypeLibrary != 0 {
-		if c.evalClient(cpLibrary) {
-			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeLibrary
-			return true
-		}
-	}
-	if c.ctm&ClientTypeFeedReader != 0 {
-		if c.evalClient(cpFeedReader) {
-			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeFeedReader
 			return true
 		}
 	}
@@ -54,6 +40,20 @@ func (c *Ctx) parseClient() bool {
 		if c.evalClient(cpPIM) {
 			c.SetBit(flagClientDetect, true)
 			c.ct = ClientTypePIM
+			return true
+		}
+	}
+	if c.ctm&ClientTypeBrowser != 0 {
+		if c.evalClient(cpBrowser) {
+			c.SetBit(flagClientDetect, true)
+			c.ct = ClientTypeBrowser
+			return true
+		}
+	}
+	if c.ctm&ClientTypeLibrary != 0 {
+		if c.evalClient(cpLibrary) {
+			c.SetBit(flagClientDetect, true)
+			c.ct = ClientTypeLibrary
 			return true
 		}
 	}
