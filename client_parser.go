@@ -1,8 +1,6 @@
 package uaxpl
 
-import (
-	"bytes"
-)
+import "bytes"
 
 const (
 	// cpBrowserEngine = 0
@@ -67,17 +65,6 @@ func (c *Ctx) evalClient(idx int) bool {
 	var (
 		x *cr
 	)
-	for i := 0; i < irl; i++ {
-		v := &ir[i]
-		if v.re == -1 {
-			lo, hi := v.si.Decode()
-			si := __cr_buf[lo:hi]
-			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
-				x = v
-				break
-			}
-		}
-	}
 	if x == nil {
 		for i := 0; i < irl; i++ {
 			v := &ir[i]
@@ -96,15 +83,14 @@ func (c *Ctx) evalClient(idx int) bool {
 					}
 					break
 				}
+			} else {
+				lo, hi := v.si.Decode()
+				si := __cr_buf[lo:hi]
+				if len(si) > 0 && bytes.Index(c.src, si) != -1 {
+					x = v
+					break
+				}
 			}
-			// else {
-			// 	lo, hi := v.si.Decode()
-			// 	si := __cr_buf[lo:hi]
-			// 	if len(si) > 0 && bytes.Index(c.src, si) != -1 {
-			// 		x = v
-			// 		break
-			// 	}
-			// }
 		}
 	}
 

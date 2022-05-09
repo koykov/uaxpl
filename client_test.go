@@ -34,16 +34,13 @@ func TestClientParse(t *testing.T) {
 	for i := 0; i < len(ds); i++ {
 		stage := &ds[i]
 		t.Run("dataset/browser"+strconv.Itoa(i), func(t *testing.T) {
-			if stage.UA == "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Comodo_Dragon/17.1.0.0 Chrome/17.0.963.38 Safari/535.11" {
-				t.Log("1")
-			}
+			ok := true
 			ctx := AcquireWithSrcStr(stage.UA)
 			ctx.SetRequestedWith(testGetRWH(stage))
-			assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
-			if !assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name, false) {
-				t.Log("->", stage.UA)
-			}
-			if !assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, false) {
+			ok = ok && assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
+			ok = ok && assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name, false)
+			ok = ok && assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, false)
+			if !ok {
 				t.Log("->", stage.UA)
 			}
 			Release(ctx)
