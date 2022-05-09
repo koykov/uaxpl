@@ -149,7 +149,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 
 	_, _ = w.WriteString("__cr_re = []*regexp.Regexp{\n")
 	for i := 0; i < len(bufRE); i++ {
-		_, _ = w.WriteString("regexp.MustCompile(`(?i)" + bufRE[i] + "`),\n")
+		_, _ = w.WriteString("regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\\-_]|[^A-Z0-9\\-]_|sprd-|MZ-)(?:" + bufRE[i] + ")`),\n")
 	}
 	_, _ = w.WriteString("}\n")
 

@@ -2,6 +2,7 @@ package uaxpl
 
 import (
 	"github.com/koykov/bitset"
+	"github.com/koykov/bytealg"
 	"github.com/koykov/entry"
 	"github.com/koykov/fastconv"
 	"github.com/koykov/hash/fnv"
@@ -120,9 +121,10 @@ func (c *Ctx) GetBrowserVersionString() string {
 	}
 	if c.cve > 0 {
 		lo, hi := c.cve.Decode()
-		return fastconv.B2S(c.src[lo:hi])
+		raw := c.src[lo:hi]
+		return fastconv.B2S(bytealg.TrimRight(raw, bDot))
 	}
-	return Unknown
+	return ""
 }
 
 func (c *Ctx) GetEngine() string {

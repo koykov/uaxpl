@@ -48,8 +48,9 @@ func normalizeRegex(s string) string {
 				}
 			}
 			ss := s[io-1 : ic+1]
-			sr := "[^" + ss[4:len(ss)-1] + "]*"
-			sr = strings.ReplaceAll(sr, "-", "\\-")
+			// sr := "[^" + ss[4:len(ss)-1] + "]*"
+			// sr = strings.ReplaceAll(sr, "-", "\\-")
+			sr := ""
 			s = strings.Replace(s, ss, sr, 1)
 		}
 	}
@@ -70,8 +71,9 @@ func normalizeRegex(s string) string {
 			}
 		}
 		ss := s[io-1 : ic+1]
-		sr := ".*[^" + ss[5:len(ss)-1] + "]*"
-		sr = strings.ReplaceAll(sr, "-", "\\-")
+		// sr := ".*[^" + ss[5:len(ss)-1] + "]*"
+		// sr = strings.ReplaceAll(sr, "-", "\\-")
+		sr := ""
 		s = strings.Replace(s, ss, sr, 1)
 	}
 	if reNegativeLookahead.MatchString(s) {
@@ -91,8 +93,9 @@ func normalizeRegex(s string) string {
 			}
 		}
 		ss := s[io-1 : ic+1]
-		sr := "[^" + ss[3:len(ss)-1] + "]*"
-		sr = strings.ReplaceAll(sr, "-", "\\-")
+		// sr := "[^" + ss[3:len(ss)-1] + "]*"
+		// sr = strings.ReplaceAll(sr, "-", "\\-")
+		sr := ""
 		s = strings.Replace(s, ss, sr, 1)
 	}
 	return s

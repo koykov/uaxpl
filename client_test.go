@@ -42,12 +42,16 @@ func TestClientParse(t *testing.T) {
 	for i := 0; i < len(ds); i++ {
 		stage := &ds[i]
 		t.Run("dataset/browser"+strconv.Itoa(i), func(t *testing.T) {
-			ctx := AcquireWithSrcStr(stage.UA)
-			if rwh, ok := stage.Headers["http-x-requested-with"]; ok {
-				ctx.SetRequestedWith(rwh)
+			if stage.UA == "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Comodo_Dragon/17.1.0.0 Chrome/17.0.963.38 Safari/535.11" {
+				t.Log("1")
 			}
+			ctx := AcquireWithSrcStr(stage.UA)
+			ctx.SetRequestedWith(testGetRWH(stage))
 			assertCVS(t, ctx.GetClientType(), ClientTypeBrowser)
 			if !assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name) {
+				t.Log("->", stage.UA)
+			}
+			if !assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version) {
 				t.Log("->", stage.UA)
 			}
 			Release(ctx)
