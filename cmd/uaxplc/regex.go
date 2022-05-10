@@ -39,7 +39,7 @@ func normalizeRegex(s string) string {
 				if s[i] == '(' {
 					bo++
 				}
-				if s[i] == ')' {
+				if s[i] == ')' && s[i-1] != '\\' {
 					bc++
 				}
 				if bo == bc {
@@ -62,7 +62,7 @@ func normalizeRegex(s string) string {
 			if s[i] == '(' {
 				bo++
 			}
-			if s[i] == ')' {
+			if s[i] == ')' && s[i-1] != '\\' {
 				bc++
 			}
 			if bo == bc {
@@ -77,26 +77,31 @@ func normalizeRegex(s string) string {
 		s = strings.Replace(s, ss, sr, 1)
 	}
 	if reNegativeLookahead.MatchString(s) {
-		bo, bc := 1, 0
-		io := strings.Index(s, "(?!") + 1
-		ic := io
-		for i := io; i < len(s); i++ {
-			if s[i] == '(' {
-				bo++
-			}
-			if s[i] == ')' {
-				bc++
-			}
-			if bo == bc {
-				ic = i
+		for {
+			bo, bc := 1, 0
+			io := strings.Index(s, "(?!") + 1
+			if io == 0 {
 				break
 			}
+			ic := io
+			for i := io; i < len(s); i++ {
+				if s[i] == '(' {
+					bo++
+				}
+				if s[i] == ')' && s[i-1] != '\\' {
+					bc++
+				}
+				if bo == bc {
+					ic = i
+					break
+				}
+			}
+			ss := s[io-1 : ic+1]
+			// sr := "[^" + ss[3:len(ss)-1] + "]*"
+			// sr = strings.ReplaceAll(sr, "-", "\\-")
+			sr := ""
+			s = strings.Replace(s, ss, sr, 1)
 		}
-		ss := s[io-1 : ic+1]
-		// sr := "[^" + ss[3:len(ss)-1] + "]*"
-		// sr = strings.ReplaceAll(sr, "-", "\\-")
-		sr := ""
-		s = strings.Replace(s, ss, sr, 1)
 	}
 	return s
 }
