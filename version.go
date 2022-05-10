@@ -95,3 +95,11 @@ func (v *Version) Reset() {
 	v.Major, v.Minor, v.Patch, v.Revision, v.Suffix = 0, 0, 0, 0, ""
 	v.p = false
 }
+
+func getMajor(ver string) string {
+	p := strings.Index(ver, ".")
+	if p == -1 {
+		return ""
+	}
+	return ver[:p]
+}

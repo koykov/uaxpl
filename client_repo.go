@@ -1643,242 +1643,187 @@ var (
 	}
 	__cr_ef = []engFn{
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "28" {
+				return 0x1300000018
+			}
+			return 0x180000001e
+		},
+		func(s string) entry.Entry64 {
+			if s >= "3" {
 				return 0x180000001e
 			}
+			return 0x2a0000002f
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "15" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x1e00000024
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "15" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x1e00000024
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "15" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x1e00000024
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "15" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x1e00000024
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "15" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
-				return 0x1300000018
-			default:
-				return 0x180000001e
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "3":
-				return 0x180000001e
-			default:
-				return 0x2a0000002f
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "15":
-				return 0x1300000018
-			default:
-				return 0x1e00000024
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "15":
-				return 0x1300000018
-			default:
-				return 0x1e00000024
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "15":
-				return 0x1300000018
-			default:
-				return 0x1e00000024
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "15":
-				return 0x1300000018
-			default:
-				return 0x1e00000024
-			}
-		},
-		func(s string) entry.Entry64 {
-			switch s {
-			case "15":
-				return 0x1300000018
-			case "3.5":
+			if s >= "3.5" {
 				return 0x99000000997
-			case "7":
+			}
+			if s >= "7" {
 				return 0x1e00000024
-			default:
-				return 0x00000000
 			}
+			return 0x00000000
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "4":
+			if s >= "4" {
 				return 0x9cd000009cd
-			default:
-				return 0x2f00000034
 			}
+			return 0x2f00000034
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "4.5":
+			if s >= "4.5" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "3":
+			if s >= "3" {
 				return 0x180000001e
-			default:
-				return 0x00000000
 			}
+			return 0x00000000
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "2.28":
+			if s >= "2.28" {
 				return 0x180000001e
-			case "2.9.16":
+			}
+			if s >= "2.9.16" {
 				return 0x9cd000009cd
-			default:
-				return 0x2a0000002f
 			}
+			return 0x2a0000002f
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "28":
+			if s >= "28" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "4":
+			if s >= "4" {
 				return 0x1300000018
-			default:
-				return 0x180000001e
 			}
+			return 0x180000001e
 		},
 		func(s string) entry.Entry64 {
-			switch s {
-			case "4":
+			if s >= "4" {
 				return 0x180000001e
-			default:
-				return 0xe4500000e49
 			}
+			return 0xe4500000e49
 		},
 	}
 	__cr_buf = []byte{

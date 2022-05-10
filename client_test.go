@@ -24,7 +24,8 @@ func TestClientParse(t *testing.T) {
 		ctx := NewCtxWithSrcStr(ua)
 		assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
 		assertStr(t, "browser", ctx.GetBrowser(), "Yandex Browser Lite", false)
-		assertStr(t, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", false)
+		assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", false)
+		assertStr(t, "engine", ctx.GetEngine(), "Blink", false)
 	})
 
 	ds, err := testLoadBrowserDS("testdata/browser.json")
@@ -40,6 +41,7 @@ func TestClientParse(t *testing.T) {
 			ok = ok && assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
 			ok = ok && assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name, false)
 			ok = ok && assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, false)
+			ok = ok && assertStr(t, "engine", ctx.GetEngine(), stage.Client.Engine, false)
 			if !ok {
 				t.Log("->", stage.UA)
 			}
@@ -75,6 +77,7 @@ func BenchmarkClientParse(b *testing.B) {
 			assertCVS(b, ctx.GetClientType(), ClientTypeBrowser, true)
 			assertStr(b, "browser", ctx.GetBrowser(), stage.Client.Name, true)
 			assertVerStr(b, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, true)
+			assertStr(b, "engine", ctx.GetEngine(), stage.Client.Engine, true)
 			Release(ctx)
 		}
 	})

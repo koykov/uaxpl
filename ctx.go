@@ -138,7 +138,7 @@ func (c *Ctx) GetEngine() string {
 		lo, hi := c.ene.Decode()
 		return fastconv.B2S(__cr_buf[lo:hi])
 	}
-	return Unknown
+	return ""
 }
 
 func (c *Ctx) GetEngineVersion() *Version {
