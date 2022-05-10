@@ -105,8 +105,6 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 			ne = buf.add(brand.Name)
 
 			rs := brand.Regex
-			rsCpy := rs
-			_ = rsCpy
 			if !isRegex(rs) {
 				si = buf.add(brand.Regex)
 			} else {
@@ -115,7 +113,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 					bufRE = append(bufRE, rs)
 					re = int32(len(bufRE) - 1)
 				} else {
-					// log.Printf("regexp error '%s' on '%s'", err, rs)
+					log.Printf("regexp error '%s' on '%s'", err, rs)
 				}
 			}
 
