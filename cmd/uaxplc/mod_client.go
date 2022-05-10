@@ -54,10 +54,12 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 	}
 
 	var (
-		bufCR []string
-		bufRE []string
-		bufEF []string
-		buf   buf
+		bufCR  []string
+		bufRE  []string
+		bufEF  []string
+		idxE   = make(map[string]struct{})
+		bufERE []string
+		buf    buf
 	)
 
 	_, _ = w.WriteString("import (\n\"github.com/koykov/entry\"\n\"regexp\"\n)\n\n")
@@ -118,11 +120,15 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			if tuple.Engine != nil {
 				if len(tuple.Engine.Default) > 0 {
 					ed = buf.add(tuple.Engine.Default)
+					idxE[tuple.Engine.Default] = struct{}{}
 				}
 				if len(tuple.Engine.Versions) > 0 {
 					fn := m.ef(tuple.Engine, ed, &buf)
 					bufEF = append(bufEF, fn)
 					ef = int32(len(bufEF) - 1)
+					for _, e := range tuple.Engine.Versions {
+						idxE[e] = struct{}{}
+					}
 				}
 			}
 
@@ -157,6 +163,42 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 	for i := 0; i < len(bufEF); i++ {
 		_, _ = w.WriteString(bufEF[i])
 		_, _ = w.WriteString(",\n")
+	}
+	_, _ = w.WriteString("}\n")
+
+	_, _ = w.WriteString("__cr_ev = map[entry.Entry64]int32{\n")
+	if len(idxE) > 0 {
+		var bs []string
+		for e := range idxE {
+			if len(e) == 0 {
+				continue
+			}
+			bs = append(bs, e)
+		}
+		sort.Strings(bs)
+		for i := 0; i < len(bs); i++ {
+			var re string
+			en := bs[i]
+			if en == "Gecko" {
+				re = `[ ](?:rv[: ]([0-9\.]+)).*gecko/[0-9.]+`
+			} else {
+				if en == "Blink" {
+					en = "Chrome"
+				}
+				re = fmt.Sprintf(`%s\s*[/\s]\s*(\d+(?:.\d+)+)`, en)
+			}
+			e := buf.add(bs[i])
+			bufERE = append(bufERE, re)
+			_, _ = w.WriteString(hex(e))
+			_ = w.WriteByte(':')
+			_, _ = w.WriteString(hex(int32(len(bufERE) - 1)))
+			_, _ = w.WriteString(",\n")
+		}
+	}
+	_, _ = w.WriteString("}\n")
+	_, _ = w.WriteString("__cr_evre = []*regexp.Regexp{\n")
+	for i := 0; i < len(bufERE); i++ {
+		_, _ = w.WriteString("regexp.MustCompile(`(?i)" + bufERE[i] + "`),\n")
 	}
 	_, _ = w.WriteString("}\n")
 

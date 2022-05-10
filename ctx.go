@@ -157,7 +157,7 @@ func (c *Ctx) GetEngineVersionString() string {
 		lo, hi := c.eve.Decode()
 		return fastconv.B2S(c.src[lo:hi])
 	}
-	return Unknown
+	return ""
 }
 
 func (c *Ctx) Reset() {

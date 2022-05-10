@@ -24,8 +24,9 @@ func TestClientParse(t *testing.T) {
 		ctx := NewCtxWithSrcStr(ua)
 		assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
 		assertStr(t, "browser", ctx.GetBrowser(), "Yandex Browser Lite", false)
-		assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", false)
+		assertVer(t, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", false)
 		assertStr(t, "engine", ctx.GetEngine(), "Blink", false)
+		assertVer(t, "engine version", ctx.GetEngineVersionString(), "75.0.3770.101", false)
 	})
 
 	ds, err := testLoadBrowserDS("testdata/browser.json")
@@ -40,8 +41,9 @@ func TestClientParse(t *testing.T) {
 			ctx.SetRequestedWith(testGetRWH(stage))
 			ok = ok && assertCVS(t, ctx.GetClientType(), ClientTypeBrowser, false)
 			ok = ok && assertStr(t, "browser", ctx.GetBrowser(), stage.Client.Name, false)
-			ok = ok && assertVerStr(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, false)
+			ok = ok && assertVer(t, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, false)
 			ok = ok && assertStr(t, "engine", ctx.GetEngine(), stage.Client.Engine, false)
+			ok = ok && assertVer(t, "engine", ctx.GetEngineVersionString(), stage.Client.EngineVersion, false)
 			if !ok {
 				t.Log("->", stage.UA)
 			}
@@ -58,7 +60,9 @@ func BenchmarkClientParse(b *testing.B) {
 			ctx := AcquireWithSrcStr(ua)
 			assertCVS(b, ctx.GetClientType(), ClientTypeBrowser, true)
 			assertStr(b, "browser", ctx.GetBrowser(), "Yandex Browser Lite", true)
-			assertVerStr(b, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", true)
+			assertVer(b, "browser version", ctx.GetBrowserVersionString(), "19.1.0.130", true)
+			assertStr(b, "engine", ctx.GetEngine(), "Blink", false)
+			assertVer(b, "engine version", ctx.GetEngineVersionString(), "75.0.3770.101", false)
 			Release(ctx)
 		}
 	})
@@ -76,8 +80,9 @@ func BenchmarkClientParse(b *testing.B) {
 			ctx.SetRequestedWith(testGetRWH(stage))
 			assertCVS(b, ctx.GetClientType(), ClientTypeBrowser, true)
 			assertStr(b, "browser", ctx.GetBrowser(), stage.Client.Name, true)
-			assertVerStr(b, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, true)
+			assertVer(b, "browser version", ctx.GetBrowserVersionString(), stage.Client.Version, true)
 			assertStr(b, "engine", ctx.GetEngine(), stage.Client.Engine, true)
+			assertVer(b, "engine version", ctx.GetEngineVersionString(), stage.Client.EngineVersion, true)
 			Release(ctx)
 		}
 	})

@@ -1826,6 +1826,42 @@ var (
 			return 0xe4500000e49
 		},
 	}
+	__cr_ev = map[entry.Entry64]int32{
+		0x1300000018:  0x0000,
+		0xdd900000dde: 0x0001,
+		0x80000000c:   0x0002,
+		0x4000000049:  0x0003,
+		0x99000000997: 0x0004,
+		0x2a0000002f:  0x0005,
+		0x240000002a:  0x0006,
+		0x2f00000034:  0x0007,
+		0x00000008:    0x0008,
+		0x340000003b:  0x0009,
+		0x1e00000024:  0x000a,
+		0x3b00000040:  0x000b,
+		0xd7300000d7d: 0x000c,
+		0xc00000013:   0x000d,
+		0x180000001e:  0x000e,
+		0xe4500000e49: 0x000f,
+	}
+	__cr_evre = []*regexp.Regexp{
+		regexp.MustCompile(`(?i)Chrome\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Dillo\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Edge\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)EkiohFlow\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Elektra\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)[ ](?:rv[: ]([0-9\.]+)).*gecko/[0-9.]+`),
+		regexp.MustCompile(`(?i)Goanna\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)KHTML\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)NetFront\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)NetSurf\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Presto\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Servo\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Text-based\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)Trident\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)WebKit\s*[/\s]\s*(\d+(?:.\d+)+)`),
+		regexp.MustCompile(`(?i)iCab\s*[/\s]\s*(\d+(?:.\d+)+)`),
+	}
 	__cr_buf = []byte{
 		0x4e, 0x65, 0x74, 0x46, 0x72, 0x6f, 0x6e, 0x74, 0x45, 0x64, 0x67, 0x65, 0x54, 0x72, 0x69, 0x64,
 		0x65, 0x6e, 0x74, 0x42, 0x6c, 0x69, 0x6e, 0x6b, 0x57, 0x65, 0x62, 0x4b, 0x69, 0x74, 0x50, 0x72,

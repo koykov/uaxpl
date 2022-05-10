@@ -51,7 +51,7 @@ func assertStr(tb testing.TB, stage, a, b string, suppress bool) bool {
 	return true
 }
 
-func assertVerStr(tb testing.TB, stage, a, b string, suppress bool) bool {
+func assertVer(tb testing.TB, stage, a, b string, suppress bool) bool {
 	if a != b && len(b) > 0 {
 		if !suppress {
 			tb.Errorf("%s mismatch: need '%s' got '%s'", stage, b, a)
