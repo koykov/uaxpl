@@ -195,13 +195,12 @@ func (m clientModule) ef(e *ClientEngine, def entry.Entry64, buf *buf) (out stri
 		return bufVE[i].v < bufVE[j].v
 	})
 	out += "func(s string) entry.Entry64 {\n"
-	out += "switch s {\n"
 	for i := 0; i < len(bufVE); i++ {
 		x := &bufVE[i]
 		e1 := buf.add(x.e)
-		out += "case \"" + x.v + "\":\nreturn " + fmt.Sprintf("0x%08x", e1) + "\n"
+		out += "if s>=\"" + x.v + "\"{return " + fmt.Sprintf("0x%08x", e1) + "}\n"
 	}
-	out += "default:\nreturn " + fmt.Sprintf("0x%08x", def) + "\n"
-	out += "}\n}"
+	out += "return " + fmt.Sprintf("0x%08x", def) + "\n"
+	out += "}"
 	return
 }
