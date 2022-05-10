@@ -33,6 +33,8 @@ type dm struct {
 
 func (t DeviceType) String() string {
 	switch t {
+	case DeviceTypeNotebook:
+		return "desktop"
 	case DeviceTypeMobile:
 		return "smartphone"
 	case DeviceTypeConsole:

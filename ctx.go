@@ -17,7 +17,7 @@ const (
 
 type Ctx struct {
 	bitset.Bitset
-	src []byte
+	src, buf []byte
 
 	ctm ClientType
 	dtm DeviceType
@@ -33,8 +33,9 @@ type Ctx struct {
 	eve entry.Entry64
 	ev  Version
 
-	dt DeviceType
-	// ...
+	dt  DeviceType
+	bne entry.Entry64
+	mne entry.Entry64
 }
 
 func NewCtx() *Ctx {
@@ -160,6 +161,37 @@ func (c *Ctx) GetEngineVersionString() string {
 	return ""
 }
 
+func (c *Ctx) GetDeviceType() DeviceType {
+	if !c.CheckBit(flagDeviceDetect) {
+		c.parseDevice()
+	}
+	return c.dt
+}
+
+func (c *Ctx) GetBrand() string {
+	if !c.CheckBit(flagDeviceDetect) {
+		c.parseDevice()
+	}
+	if c.bne != 0 {
+		lo, hi := c.bne.Decode()
+		raw := __dr_buf[lo:hi]
+		return fastconv.B2S(raw)
+	}
+	return Unknown
+}
+
+func (c *Ctx) GetModel() string {
+	if !c.CheckBit(flagDeviceDetect) {
+		c.parseDevice()
+	}
+	if c.mne != 0 {
+		lo, hi := c.mne.Decode()
+		raw := c.buf[lo:hi]
+		return fastconv.B2S(raw)
+	}
+	return ""
+}
+
 func (c *Ctx) Reset() {
 	c.reset()
 	c.ctm = ClientTypeAll
@@ -169,9 +201,11 @@ func (c *Ctx) Reset() {
 func (c *Ctx) reset() {
 	c.Bitset.Reset()
 	c.src = c.src[:0]
+	c.buf = c.buf[:0]
 
 	c.hh = 0
 
+	c.ct = 0
 	c.cne.Reset()
 	c.cve.Reset()
 	c.cv.Reset()
@@ -179,4 +213,8 @@ func (c *Ctx) reset() {
 	c.ene.Reset()
 	c.eve.Reset()
 	c.ev.Reset()
+
+	c.dt = 0
+	c.bne.Reset()
+	c.mne.Reset()
 }
