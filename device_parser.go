@@ -103,11 +103,10 @@ func (c *Ctx) evalDevice(idx int) bool {
 		c.bne = x.ne
 
 		if x.sm != -1 {
-			sm := __dr_dm[x.sm]
+			sm := &__dr_dm[x.sm]
 			c.deviceBufMNE(sm.ne)
 		} else if x.me != 0 {
 			lo, hi := x.me.Decode()
-			_ = __dr_dm[hi-1]
 			for i := lo; i < hi; i++ {
 				m := &__dr_dm[i]
 				if m.re >= 0 {

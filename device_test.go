@@ -80,3 +80,49 @@ func TestDeviceParse(t *testing.T) {
 		}
 	})
 }
+
+func BenchmarkDeviceParse(b *testing.B) {
+	benchDS := func(b *testing.B, filename string) error {
+		var ds []deviceDS
+		contents, err := os.ReadFile(filename)
+		if err != nil {
+			return err
+		}
+		if err = json.Unmarshal(contents, &ds); err != nil {
+			return err
+		}
+
+		b.ResetTimer()
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			stage := &ds[i%len(ds)]
+			ctx := AcquireWithSrcStr(stage.UA)
+			_ = ctx.GetDeviceType()
+			_ = ctx.GetBrand()
+			_ = ctx.GetModel()
+			Release(ctx)
+		}
+
+		return nil
+	}
+	b.Run("camera", func(b *testing.B) {
+		if err := benchDS(b, "testdata/device/camera.json"); err != nil {
+			b.Error(err)
+		}
+	})
+	b.Run("car_browser", func(b *testing.B) {
+		if err := benchDS(b, "testdata/device/car_browser.json"); err != nil {
+			b.Error(err)
+		}
+	})
+	b.Run("console", func(b *testing.B) {
+		if err := benchDS(b, "testdata/device/console.json"); err != nil {
+			b.Error(err)
+		}
+	})
+	b.Run("notebook", func(b *testing.B) {
+		if err := benchDS(b, "testdata/device/notebook.json"); err != nil {
+			b.Error(err)
+		}
+	})
+}
