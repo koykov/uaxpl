@@ -70,32 +70,32 @@ func TestClientParse(t *testing.T) {
 		return nil
 	}
 	t.Run("browser", func(t *testing.T) {
-		if err := testDS("testdata/browser.json", ClientTypeBrowser); err != nil {
+		if err := testDS("testdata/client/browser.json", ClientTypeBrowser); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("feed_reader", func(t *testing.T) {
-		if err := testDS("testdata/feed_reader.json", ClientTypeFeedReader); err != nil {
+		if err := testDS("testdata/client/feed_reader.json", ClientTypeFeedReader); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("library", func(t *testing.T) {
-		if err := testDS("testdata/library.json", ClientTypeLibrary); err != nil {
+		if err := testDS("testdata/client/library.json", ClientTypeLibrary); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("mediaplayer", func(t *testing.T) {
-		if err := testDS("testdata/mediaplayer.json", ClientTypeMediaPlayer); err != nil {
+		if err := testDS("testdata/client/mediaplayer.json", ClientTypeMediaPlayer); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("mobile_app", func(t *testing.T) {
-		if err := testDS("testdata/mobile_app.json", ClientTypeMobileApp); err != nil {
+		if err := testDS("testdata/client/mobile_app.json", ClientTypeMobileApp); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("pim", func(t *testing.T) {
-		if err := testDS("testdata/pim.json", ClientTypePIM); err != nil {
+		if err := testDS("testdata/client/pim.json", ClientTypePIM); err != nil {
 			t.Error(err)
 		}
 	})
@@ -129,27 +129,27 @@ func BenchmarkClientParse(b *testing.B) {
 		return nil
 	}
 	b.Run("browser", func(b *testing.B) {
-		if err := benchDS(b, "testdata/browser.json"); err != nil {
+		if err := benchDS(b, "testdata/client/browser.json"); err != nil {
 			b.Error(err)
 		}
 	})
 	b.Run("library", func(b *testing.B) {
-		if err := benchDS(b, "testdata/library.json"); err != nil {
+		if err := benchDS(b, "testdata/client/library.json"); err != nil {
 			b.Error(err)
 		}
 	})
 	b.Run("mediaplayer", func(b *testing.B) {
-		if err := benchDS(b, "testdata/mediaplayer.json"); err != nil {
+		if err := benchDS(b, "testdata/client/mediaplayer.json"); err != nil {
 			b.Error(err)
 		}
 	})
 	b.Run("mobile_app", func(b *testing.B) {
-		if err := benchDS(b, "testdata/mobile_app.json"); err != nil {
+		if err := benchDS(b, "testdata/client/mobile_app.json"); err != nil {
 			b.Error(err)
 		}
 	})
 	b.Run("pim", func(b *testing.B) {
-		if err := benchDS(b, "testdata/pim.json"); err != nil {
+		if err := benchDS(b, "testdata/client/pim.json"); err != nil {
 			b.Error(err)
 		}
 	})
