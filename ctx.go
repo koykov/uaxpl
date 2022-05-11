@@ -13,6 +13,9 @@ const (
 
 	flagClientDetect = iota
 	flagDeviceDetect
+	flagOSDetect
+	flagOSBufSrc
+	flagOSVerBufSrc
 )
 
 type Ctx struct {
@@ -36,6 +39,10 @@ type Ctx struct {
 	dt  DeviceType
 	bne entry.Entry64
 	mne entry.Entry64
+
+	os  entry.Entry64
+	ove entry.Entry64
+	ov  Version
 }
 
 func NewCtx() *Ctx {
@@ -192,6 +199,45 @@ func (c *Ctx) GetModel() string {
 	return ""
 }
 
+func (c *Ctx) GetOS() string {
+	if !c.CheckBit(flagOSDetect) {
+		c.parseOS()
+	}
+	if c.os != 0 {
+		buf := __or_buf
+		if c.CheckBit(flagOSBufSrc) {
+			buf = c.src
+		}
+		lo, hi := c.os.Decode()
+		raw := buf[lo:hi]
+		return fastconv.B2S(raw)
+	}
+	return Unknown
+}
+
+func (c *Ctx) GetOSVersion() *Version {
+	if !c.ov.p {
+		raw := c.GetOSVersionString()
+		_ = c.ov.Parse(raw)
+	}
+	return &c.ov
+}
+
+func (c *Ctx) GetOSVersionString() string {
+	if !c.CheckBit(flagOSDetect) {
+		c.parseOS()
+	}
+	if c.ove > 0 {
+		buf := c.src
+		if c.CheckBit(flagOSVerBufSrc) {
+			buf = __or_buf
+		}
+		lo, hi := c.ove.Decode()
+		return fastconv.B2S(buf[lo:hi])
+	}
+	return ""
+}
+
 func (c *Ctx) Reset() {
 	c.reset()
 	c.ctm = ClientTypeAll
@@ -217,4 +263,8 @@ func (c *Ctx) reset() {
 	c.dt = 0
 	c.bne.Reset()
 	c.mne.Reset()
+
+	c.os.Reset()
+	c.ove.Reset()
+	c.ov.Reset()
 }
