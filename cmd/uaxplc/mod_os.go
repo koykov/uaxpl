@@ -104,6 +104,8 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 					vs1 entry.Entry64 // static version
 				)
 				if !isRegex(tv.Regex) {
+					si1 = buf.add(tv.Regex)
+				} else {
 					rs1 := normalizeRegex(tv.Regex)
 					if _, err = regexp.Compile(rs1); err == nil {
 						bufRE = append(bufRE, rs1)
@@ -111,8 +113,6 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 					} else {
 						log.Printf("regexp error '%s' on '%s'", err, rs)
 					}
-				} else {
-					si1 = buf.add(tv.Regex)
 				}
 				vi1, vs1 = m.parseInx(tv.Version, &buf)
 				bufOV = append(bufOV, fmt.Sprintf("ov{re:%s,si:%s,vi:%s,vs:%s},",
