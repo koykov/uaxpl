@@ -19,3 +19,5 @@ func AcquireWithSrcStr(src string) *Ctx {
 	ctx := Acquire()
 	return ctx.SetUserAgentStr(src)
 }
+
+var _, _, _ = NewCtxWithSrc, NewCtxWithSrcStr, AcquireWithSrc
