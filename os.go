@@ -2,7 +2,6 @@ package uaxpl
 
 import (
 	"bytes"
-	"log"
 
 	"github.com/koykov/entry"
 )
@@ -24,70 +23,85 @@ type ov struct {
 	vs entry.Entry64 // static version
 }
 
+var (
+	osMaybeMacBytes = [][]byte{
+		[]byte("Mac"),
+		[]byte("(x86_64)"),
+		[]byte("com.apple.Safari"),
+	}
+	osMaybeMacRE = []string{
+		`(?i)^.*CFNetwork/.+ Darwin/(\d+[\.\d]+)`,
+		`(?i)(?:Podcasts/(?:[\d\.]+)|Instacast(?:HD)?/(?:\d\.[\d\.abc]+)|Pocket Casts, iOS|\(iOS\)|iOS; Opera|Overcast|Castro|Podcat|iCatcher|RSSRadio/|MobileSafari/)`,
+	}
+)
+
 func (c *Ctx) parseOS() bool {
 	r := __or_os
 	rl := len(r)
 	_ = r[rl-1]
 	var x *or
+	maybeMac := bytes.Index(c.src, osMaybeMacBytes[0]) != -1 ||
+		bytes.Index(c.src, osMaybeMacBytes[1]) != -1 ||
+		bytes.Index(c.src, osMaybeMacBytes[2]) != -1
 	for i := 0; i < rl; i++ {
 		v := &r[i]
 		if v.re >= 0 {
 			re := __or_re[v.re]
 			if re.Match(c.src) {
-				if string(c.src) == "AtomicBrowser/3.7.1 CFNetwork/467.12 Darwin/10.3.1" {
-					log.Println(1)
+				if rs := re.String(); (rs == osMaybeMacRE[0] || rs == osMaybeMacRE[1]) && maybeMac {
+					continue
 				}
 				x = v
-				if x.ni != -1 || x.vi != -1 {
+				if x.ni != -1 {
 					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.vi) {
 						if x.ni != -1 {
 							lo1, hi1 := m[x.ni*2], m[x.ni*2+1]
 							c.os.Encode(uint32(lo1), uint32(hi1))
 							c.SetBit(flagOSBufSrc, true)
 						}
-						lo1, hi1 := m[x.vi*2], m[x.vi*2+1]
-						if lo1 != -1 && hi1 != -1 {
-							lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
-							c.ove.Encode(lo, hi)
-						}
+						// lo1, hi1 := m[x.vi*2], m[x.vi*2+1]
+						// if lo1 != -1 && hi1 != -1 {
+						// 	lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
+						// 	c.ove.Encode(lo, hi)
+						// }
 					}
 				}
-				if x.vr != 0 {
-					lo, hi := x.vr.Decode()
-					rv := __or_ov[lo:hi]
-					rvl := len(rv)
-					_ = rv[rvl-1]
-					for j := lo; j < hi; j++ {
-						v1 := &__or_ov[j]
-						if v1.re >= 0 {
-							re1 := __or_re[v1.re]
-							if re1.Match(c.src) {
-								if v1.vi != -1 {
-									if m := re1.FindSubmatchIndex(c.src); len(m) > int(v1.vi) {
-										lo1, hi1 := m[v1.vi*2], m[v1.vi*2+1]
-										if lo1 != -1 && hi1 != -1 {
-											lo, hi := uint32(m[v1.vi*2]), uint32(m[v1.vi*2+1])
-											c.ove.Encode(lo, hi)
-											break
-										}
-									}
-								} else if v1.vs != 0 {
-									c.ove = v1.vs
-									c.SetBit(flagOSVerBufSrc, true)
-									break
-								}
-							}
-						} else if v1.si != 0 {
-							lo, hi := v1.si.Decode()
-							si := __or_buf[lo:hi]
-							if len(si) > 0 && bytes.Index(c.src, si) != -1 {
-								c.ove = v1.si
-								c.SetBit(flagOSVerBufSrc, true)
-								break
-							}
-						}
-					}
-				}
+				// if x.vr != 0 {
+				// 	lo, hi := x.vr.Decode()
+				// 	rv := __or_ov[lo:hi]
+				// 	rvl := len(rv)
+				// 	_ = rv[rvl-1]
+				// 	for j := lo; j < hi; j++ {
+				// 		v1 := &__or_ov[j]
+				// 		if v1.re >= 0 {
+				// 			re1 := __or_re[v1.re]
+				// 			if re1.Match(c.src) {
+				// 				if v1.vi != -1 {
+				// 					if m := re1.FindSubmatchIndex(c.src); len(m) > int(v1.vi) {
+				// 						lo1, hi1 := m[v1.vi*2], m[v1.vi*2+1]
+				// 						if lo1 != -1 && hi1 != -1 {
+				// 							lo, hi := uint32(m[v1.vi*2]), uint32(m[v1.vi*2+1])
+				// 							c.ove.Encode(lo, hi)
+				// 							break
+				// 						}
+				// 					}
+				// 				} else if v1.vs != 0 {
+				// 					c.ove = v1.vs
+				// 					c.SetBit(flagOSVerBufSrc, true)
+				// 					break
+				// 				}
+				// 			}
+				// 		} else if v1.si != 0 {
+				// 			lo, hi := v1.si.Decode()
+				// 			si := __or_buf[lo:hi]
+				// 			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
+				// 				c.ove = v1.si
+				// 				c.SetBit(flagOSVerBufSrc, true)
+				// 				break
+				// 			}
+				// 		}
+				// 	}
+				// }
 				break
 			}
 		} else if v.si != 0 {
@@ -110,6 +124,7 @@ func (c *Ctx) parseOS() bool {
 		}
 
 		c.SetBit(flagOSDetect, true)
+		return true
 	}
 
 	return false

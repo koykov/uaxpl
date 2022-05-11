@@ -38,9 +38,9 @@ func TestOSParse(t *testing.T) {
 			if o := ctx.GetOS(); o != stage.OS.Name {
 				d.add("os", o, stage.OS.Name)
 			}
-			if v := ctx.GetOSVersionString(); v != stage.OS.Version {
-				d.add("version", v, stage.OS.Version)
-			}
+			// if v := ctx.GetOSVersionString(); v != stage.OS.Version {
+			// 	d.add("version", v, stage.OS.Version)
+			// }
 			if d.len() > 0 {
 				dl = append(dl, d)
 			}
