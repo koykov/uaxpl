@@ -125,6 +125,10 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 			if len(brand.Models) > 0 {
 				meLO := uint32(len(bufDM))
 				for k := 0; k < len(brand.Models); k++ {
+					re1 = int32(-1)
+					si1.Reset()
+					ne1.Reset()
+
 					model := &brand.Models[k]
 					rs1 := model.Regex
 					if !isRegex(rs1) {
