@@ -1,6 +1,8 @@
 package uaxpl
 
 import (
+	"bytes"
+
 	"github.com/koykov/bitset"
 	"github.com/koykov/bytealg"
 	"github.com/koykov/entry"
@@ -233,7 +235,20 @@ func (c *Ctx) GetOSVersionString() string {
 			buf = __or_buf
 		}
 		lo, hi := c.ove.Decode()
-		return fastconv.B2S(buf[lo:hi])
+		raw := buf[lo:hi]
+		if bytes.IndexByte(raw, '_') != -1 {
+			off := len(c.buf)
+			_ = raw[len(raw)-1]
+			for i := 0; i < len(raw); i++ {
+				if raw[i] == '_' {
+					c.buf = append(c.buf, '.')
+				} else {
+					c.buf = append(c.buf, raw[i])
+				}
+			}
+			raw = c.buf[off:]
+		}
+		return fastconv.B2S(raw)
 	}
 	return ""
 }

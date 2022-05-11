@@ -63,56 +63,24 @@ func (c *Ctx) parseOS() bool {
 			}
 			if re.Match(c.src) {
 				x = v
-				if x.ni != -1 {
-					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.vi) {
-						if x.ni != -1 {
-							lo1, hi1 := m[x.ni*2], m[x.ni*2+1]
+				c.os = x.ne
+				if x.ni != -1 || x.vi != -1 {
+					m := re.FindSubmatchIndex(c.src)
+					if len(m) > int(x.ni) && x.ni != -1 {
+						if lo1, hi1 := m[x.ni*2], m[x.ni*2+1]; lo1 != -1 && hi1 != -1 {
 							c.os.Encode(uint32(lo1), uint32(hi1))
 							c.SetBit(flagOSBufSrc, true)
 						}
-						// lo1, hi1 := m[x.vi*2], m[x.vi*2+1]
-						// if lo1 != -1 && hi1 != -1 {
-						// 	lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
-						// 	c.ove.Encode(lo, hi)
-						// }
+					}
+					if len(m) > int(x.vi) && x.vi != -1 {
+						if lo1, hi1 := m[x.vi*2], m[x.vi*2+1]; lo1 != -1 && hi1 != -1 {
+							c.ove.Encode(uint32(lo1), uint32(hi1))
+						}
 					}
 				}
-				// if x.vr != 0 {
-				// 	lo, hi := x.vr.Decode()
-				// 	rv := __or_ov[lo:hi]
-				// 	rvl := len(rv)
-				// 	_ = rv[rvl-1]
-				// 	for j := lo; j < hi; j++ {
-				// 		v1 := &__or_ov[j]
-				// 		if v1.re >= 0 {
-				// 			re1 := __or_re[v1.re]
-				// 			if re1.Match(c.src) {
-				// 				if v1.vi != -1 {
-				// 					if m := re1.FindSubmatchIndex(c.src); len(m) > int(v1.vi) {
-				// 						lo1, hi1 := m[v1.vi*2], m[v1.vi*2+1]
-				// 						if lo1 != -1 && hi1 != -1 {
-				// 							lo, hi := uint32(m[v1.vi*2]), uint32(m[v1.vi*2+1])
-				// 							c.ove.Encode(lo, hi)
-				// 							break
-				// 						}
-				// 					}
-				// 				} else if v1.vs != 0 {
-				// 					c.ove = v1.vs
-				// 					c.SetBit(flagOSVerBufSrc, true)
-				// 					break
-				// 				}
-				// 			}
-				// 		} else if v1.si != 0 {
-				// 			lo, hi := v1.si.Decode()
-				// 			si := __or_buf[lo:hi]
-				// 			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
-				// 				c.ove = v1.si
-				// 				c.SetBit(flagOSVerBufSrc, true)
-				// 				break
-				// 			}
-				// 		}
-				// 	}
-				// }
+				if x.vr != 0 {
+					c.osEvalVer(x.vr)
+				}
 				break
 			}
 		} else if v.si != 0 {
@@ -120,15 +88,13 @@ func (c *Ctx) parseOS() bool {
 			si := __or_buf[lo:hi]
 			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 				x = v
+				c.os = x.ne
 				break
 			}
 		}
 	}
 
 	if x != nil {
-		if x.ni == -1 {
-			c.os = x.ne
-		}
 		if x.vs != 0 {
 			c.ove = x.vs
 			c.SetBit(flagOSVerBufSrc, true)
@@ -139,4 +105,38 @@ func (c *Ctx) parseOS() bool {
 	}
 
 	return false
+}
+
+func (c *Ctx) osEvalVer(r entry.Entry64) {
+	lo, hi := r.Decode()
+	rv := __or_ov[lo:hi]
+	rvl := len(rv)
+	_ = rv[rvl-1]
+	for i := 0; i < rvl; i++ {
+		v := &rv[i]
+		if v.re >= 0 {
+			re := __or_re[v.re]
+			if re.Match(c.src) {
+				if v.vi != -1 {
+					if m := re.FindSubmatchIndex(c.src); len(m) > int(v.vi) {
+						if lo1, hi1 := m[v.vi*2], m[v.vi*2+1]; lo1 != -1 && hi1 != -1 {
+							c.ove.Encode(uint32(lo1), uint32(hi1))
+						}
+					}
+				} else {
+					c.ove = v.vs
+					c.SetBit(flagOSVerBufSrc, true)
+				}
+				break
+			}
+		} else if v.si != 0 {
+			lo1, hi1 := v.si.Decode()
+			si := __or_buf[lo1:hi1]
+			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
+				c.ove = v.vs
+				c.SetBit(flagOSVerBufSrc, true)
+				break
+			}
+		}
+	}
 }
