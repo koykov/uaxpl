@@ -33,6 +33,13 @@ var (
 		`(?i)^.*CFNetwork/.+ Darwin/(\d+[\.\d]+)`,
 		`(?i)(?:Podcasts/(?:[\d\.]+)|Instacast(?:HD)?/(?:\d\.[\d\.abc]+)|Pocket Casts, iOS|\(iOS\)|iOS; Opera|Overcast|Castro|Podcat|iCatcher|RSSRadio/|MobileSafari/)`,
 	}
+	osMaybeNotAND = [][]byte{
+		[]byte("like Android"),
+	}
+	osMaybeNotANDRE = []string{
+		`(?i)(?:(?:Orca-)?Android|Adr|AOSP)[ /]?(?:[a-z]+ )?(\d+[\.\d]*)`,
+		`(?i) Adr |Android|Silk-Accelerated=[a-z]{4,5}`,
+	}
 )
 
 func (c *Ctx) parseOS() bool {
@@ -43,14 +50,18 @@ func (c *Ctx) parseOS() bool {
 	maybeMac := bytes.Index(c.src, osMaybeMacBytes[0]) != -1 ||
 		bytes.Index(c.src, osMaybeMacBytes[1]) != -1 ||
 		bytes.Index(c.src, osMaybeMacBytes[2]) != -1
+	maybeNotAND := bytes.Index(c.src, osMaybeNotAND[0]) != -1
 	for i := 0; i < rl; i++ {
 		v := &r[i]
 		if v.re >= 0 {
 			re := __or_re[v.re]
+			if rs := re.String(); (rs == osMaybeMacRE[0] || rs == osMaybeMacRE[1]) && maybeMac {
+				continue
+			}
+			if rs := re.String(); (rs == osMaybeNotANDRE[0] || rs == osMaybeNotANDRE[1]) && maybeNotAND {
+				continue
+			}
 			if re.Match(c.src) {
-				if rs := re.String(); (rs == osMaybeMacRE[0] || rs == osMaybeMacRE[1]) && maybeMac {
-					continue
-				}
 				x = v
 				if x.ni != -1 {
 					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.vi) {
