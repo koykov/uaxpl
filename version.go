@@ -62,20 +62,25 @@ func (v *Version) Parse(s string) error {
 }
 
 func (v Version) Write(dst []byte) []byte {
+	var ok bool
 	if v.Major > 0 {
 		dst = strconv.AppendInt(dst, int64(v.Major), 10)
+		ok = true
 	}
-	if v.Minor > 0 {
+	if v.Minor > 0 || ok {
 		dst = append(dst, '.')
 		dst = strconv.AppendInt(dst, int64(v.Minor), 10)
+		ok = true
 	}
-	if v.Patch > 0 {
+	if v.Patch > 0 || ok {
 		dst = append(dst, '.')
 		dst = strconv.AppendInt(dst, int64(v.Patch), 10)
+		ok = true
 	}
-	if v.Revision > 0 {
+	if v.Revision > 0 || ok {
 		dst = append(dst, '.')
 		dst = strconv.AppendInt(dst, int64(v.Revision), 10)
+		ok = true
 	}
 	if len(v.Suffix) > 0 {
 		dst = append(dst, ' ')
