@@ -17,17 +17,17 @@ const (
 		ClientTypeMediaPlayer | ClientTypePIM
 )
 
-type engFn func(string) entry.Entry64
+type engineFn func(string) entry.Entry64
 
-type cr struct {
-	re int32         // regex index
-	si entry.Entry64 // string index
-	be entry.Entry64 // browser name index
-	vi int8          // version index
-	ed entry.Entry64 // default engine
-	ef int32         // engine func index
-	ul entry.Entry64 // url
-	tp entry.Entry64 // type string
+type clientTuple struct {
+	matchRI   int32         // matching regex index
+	match64   entry.Entry64 // static string matching
+	browser64 entry.Entry64 // browser name
+	browserVI int8          // version index (from regex matches)
+	engine64  entry.Entry64 // default engine
+	engineFI  int32         // engine func index
+	url64     entry.Entry64 // url
+	type64    entry.Entry64 // type string
 }
 
 func (t ClientType) String() string {

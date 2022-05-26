@@ -6,30 +6,30 @@ import (
 	"github.com/koykov/fastconv"
 )
 
-func (c *Ctx) evalEngine(cri *cr) {
-	if cri.ed != 0 {
-		c.engineName64 = cri.ed
+func (c *Ctx) evalEngine(cri *clientTuple) {
+	if cri.engine64 != 0 {
+		c.engineName64 = cri.engine64
 	}
-	if cri.ef != -1 {
+	if cri.engineFI != -1 {
 		lo, hi := c.clientVersion64.Decode()
 		raw := c.src[lo:hi]
-		c.engineName64 = __cr_ef[cri.ef](getMajor(fastconv.B2S(raw)))
+		c.engineName64 = __cr_ef[cri.engineFI](getMajor(fastconv.B2S(raw)))
 	}
 	if c.engineName64 == 0 {
 		ir := __cr_idx[cpBrowserEngine]
 		irl := len(ir)
 		_ = ir[irl-1]
-		var e *cr
+		var e *clientTuple
 		for i := 0; i < irl; i++ {
 			v := &ir[i]
-			if v.re >= 0 {
-				re := __cr_re[v.re]
+			if v.matchRI >= 0 {
+				re := __cr_re[v.matchRI]
 				if re.Match(c.src) {
 					e = v
 					break
 				}
 			} else {
-				lo, hi := v.si.Decode()
+				lo, hi := v.match64.Decode()
 				si := __cr_buf[lo:hi]
 				if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 					e = v
@@ -38,7 +38,7 @@ func (c *Ctx) evalEngine(cri *cr) {
 			}
 		}
 		if e != nil {
-			c.engineName64 = e.be
+			c.engineName64 = e.browser64
 		}
 	}
 	if c.engineName64 != 0 {

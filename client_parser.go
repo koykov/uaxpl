@@ -64,18 +64,18 @@ func (c *Ctx) evalClient(idx int) bool {
 	ir := __cr_idx[idx]
 	irl := len(ir)
 	_ = ir[irl-1]
-	var x *cr
+	var x *clientTuple
 	for i := 0; i < irl; i++ {
 		v := &ir[i]
-		if v.re >= 0 {
-			re := __cr_re[v.re]
+		if v.matchRI >= 0 {
+			re := __cr_re[v.matchRI]
 			if re.Match(c.src) {
 				x = v
-				if x.vi != -1 {
-					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.vi) {
-						lo1, hi1 := m[x.vi*2], m[x.vi*2+1]
+				if x.browserVI != -1 {
+					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.browserVI) {
+						lo1, hi1 := m[x.browserVI*2], m[x.browserVI*2+1]
 						if lo1 != -1 && hi1 != -1 {
-							lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
+							lo, hi := uint32(m[x.browserVI*2]), uint32(m[x.browserVI*2+1])
 							c.clientVersion64.Encode(lo, hi)
 						}
 					}
@@ -83,7 +83,7 @@ func (c *Ctx) evalClient(idx int) bool {
 				break
 			}
 		} else {
-			lo, hi := v.si.Decode()
+			lo, hi := v.match64.Decode()
 			si := __cr_buf[lo:hi]
 			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 				x = v
@@ -93,7 +93,7 @@ func (c *Ctx) evalClient(idx int) bool {
 	}
 
 	if x != nil {
-		c.clientName64 = x.be
+		c.clientName64 = x.browser64
 
 		// Engine detection.
 		if idx == cpBrowser {
