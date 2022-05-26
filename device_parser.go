@@ -2,6 +2,7 @@ package uaxpl
 
 import (
 	"bytes"
+	"regexp"
 
 	"github.com/koykov/entry"
 )
@@ -113,7 +114,7 @@ func (c *Ctx) evalDevice(idx int) bool {
 					re := __dr_re[m.re]
 					if re.Match(c.src) {
 						// todo replace RE placeholders
-						c.deviceBufMNE(m.ne)
+						c.deviceBufMNE1(m.ne, re)
 						break
 					}
 				} else if m.si != 0 {
@@ -134,6 +135,34 @@ func (c *Ctx) evalDevice(idx int) bool {
 func (c *Ctx) deviceBufMNE(e entry.Entry64) {
 	lo, hi := e.Decode()
 	raw := __dr_buf[lo:hi]
+	lo1 := uint32(len(c.buf))
+	c.buf = append(c.buf, raw...)
+	hi1 := uint32(len(c.buf))
+	c.mne.Encode(lo1, hi1)
+}
+
+func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
+	lo, hi := e.Decode()
+	raw := __dr_buf[lo:hi]
+	p := bytes.IndexByte(raw, '$')
+	if p != -1 {
+		lo1 := uint32(len(c.buf))
+		c.buf = append(c.buf, raw[:p]...)
+		m := re.FindSubmatchIndex(c.src)
+	loop:
+		p1 := raw[p+1]
+		i := b2i(p1)
+		r := c.src[m[i*2]:m[i*2+1]]
+		c.buf = append(c.buf, r...)
+		p = bytes.IndexByte(raw[p+1:], '$')
+		if p != -1 {
+			goto loop
+		}
+
+		hi1 := uint32(len(c.buf))
+		c.mne.Encode(lo1, hi1)
+		return
+	}
 	lo1 := uint32(len(c.buf))
 	c.buf = append(c.buf, raw...)
 	hi1 := uint32(len(c.buf))
