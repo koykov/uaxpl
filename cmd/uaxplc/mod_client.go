@@ -65,7 +65,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 	_, _ = w.WriteString("import (\n\"github.com/koykov/entry\"\n\"regexp\"\n)\n\n")
 	_, _ = w.WriteString("var (\n")
 
-	_, _ = w.WriteString("__cr_idx = [" + strconv.Itoa(len(files)) + "][]cr{\n")
+	_, _ = w.WriteString("__cr_idx = [" + strconv.Itoa(len(files)) + "][]clientTuple{\n")
 
 	for i := 0; i < len(files); i++ {
 		bufCR = bufCR[:0]
@@ -87,45 +87,45 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 		for j := 0; j < len(tuples); j++ {
 			tuple := tuples[j]
 			var (
-				re = int32(-1)   // regex index
-				si entry.Entry64 // string index
-				vi = int8(-1)    // version index
-				be entry.Entry64 // browser name index
-				ed entry.Entry64 // default engine
-				ef = int32(-1)   // engine func index
-				ul entry.Entry64 // url
-				tp entry.Entry64 // type string
+				matchRI   = int32(-1)   // regex index
+				match64   entry.Entry64 // string index
+				browser64 entry.Entry64 // browser name index
+				browserVI = int8(-1)    // version index
+				engine64  entry.Entry64 // default engine
+				engineFI  = int32(-1)   // engine func index
+				url64     entry.Entry64 // url
+				type64    entry.Entry64 // type string
 			)
 
 			rs := tuple.Regex
 			if !isRegex(rs) {
-				si = buf.add(tuple.Regex)
+				match64 = buf.add(tuple.Regex)
 			} else {
 				rs = normalizeRegex(rs)
 				if _, err = regexp.Compile(rs); err == nil {
 					bufRE = append(bufRE, rs)
-					re = int32(len(bufRE) - 1)
+					matchRI = int32(len(bufRE) - 1)
 				} else {
 					log.Printf("regexp error '%s' on '%s'", err, rs)
 				}
 			}
 			if len(tuple.Name) > 0 {
-				be = buf.add(tuple.Name)
+				browser64 = buf.add(tuple.Name)
 			}
 			if len(tuple.Version) > 0 && tuple.Version[0] == '$' {
 				n, _ := strconv.Atoi(tuple.Version[1:])
-				vi = int8(n)
+				browserVI = int8(n)
 			}
 
 			if tuple.Engine != nil {
 				if len(tuple.Engine.Default) > 0 {
-					ed = buf.add(tuple.Engine.Default)
+					engine64 = buf.add(tuple.Engine.Default)
 					idxE[tuple.Engine.Default] = struct{}{}
 				}
 				if len(tuple.Engine.Versions) > 0 {
-					fn := m.ef(tuple.Engine, ed, &buf)
+					fn := m.ef(tuple.Engine, engine64, &buf)
 					bufEF = append(bufEF, fn)
-					ef = int32(len(bufEF) - 1)
+					engineFI = int32(len(bufEF) - 1)
 					for _, e := range tuple.Engine.Versions {
 						idxE[e] = struct{}{}
 					}
@@ -133,14 +133,14 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			}
 
 			if len(tuple.URL) > 0 {
-				ul = buf.add(tuple.URL)
+				url64 = buf.add(tuple.URL)
 			}
 			if len(tuple.Type) > 0 {
-				tp = buf.add(tuple.Type)
+				type64 = buf.add(tuple.Type)
 			}
 
-			bufCR = append(bufCR, fmt.Sprintf("cr{re:%s,si:%s,be:%s,vi:%s,ed:%s,ef:%s,ul:%s,tp:%s},",
-				hex(re), hex(si), hex(be), hex(vi), hex(ed), hex(ef), hex(ul), hex(tp)))
+			bufCR = append(bufCR, fmt.Sprintf("clientTuple{matchRI:%s,match64:%s,browser64:%s,browserVI:%s,engine64:%s,engineFI:%s,url64:%s,type64:%s},",
+				hex(matchRI), hex(match64), hex(browser64), hex(browserVI), hex(engine64), hex(engineFI), hex(url64), hex(type64)))
 		}
 
 		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")
@@ -159,7 +159,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 	}
 	_, _ = w.WriteString("}\n")
 
-	_, _ = w.WriteString("__cr_ef = []engFn{\n")
+	_, _ = w.WriteString("__cr_ef = []engineFn{\n")
 	for i := 0; i < len(bufEF); i++ {
 		_, _ = w.WriteString(bufEF[i])
 		_, _ = w.WriteString(",\n")
