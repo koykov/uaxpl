@@ -8,14 +8,14 @@ import (
 
 func (c *Ctx) evalEngine(cri *cr) {
 	if cri.ed != 0 {
-		c.ene = cri.ed
+		c.engineName64 = cri.ed
 	}
 	if cri.ef != -1 {
-		lo, hi := c.cve.Decode()
+		lo, hi := c.clientVersion64.Decode()
 		raw := c.src[lo:hi]
-		c.ene = __cr_ef[cri.ef](getMajor(fastconv.B2S(raw)))
+		c.engineName64 = __cr_ef[cri.ef](getMajor(fastconv.B2S(raw)))
 	}
-	if c.ene == 0 {
+	if c.engineName64 == 0 {
 		ir := __cr_idx[cpBrowserEngine]
 		irl := len(ir)
 		_ = ir[irl-1]
@@ -38,13 +38,13 @@ func (c *Ctx) evalEngine(cri *cr) {
 			}
 		}
 		if e != nil {
-			c.ene = e.be
+			c.engineName64 = e.be
 		}
 	}
-	if c.ene != 0 {
-		if ri, ok := __cr_ev[c.ene]; ok {
+	if c.engineName64 != 0 {
+		if ri, ok := __cr_ev[c.engineName64]; ok {
 			if m := __cr_evre[ri].FindSubmatchIndex(c.src); len(m) >= 4 {
-				c.eve.Encode(uint32(m[2]), uint32(m[3]))
+				c.engineVersion64.Encode(uint32(m[2]), uint32(m[3]))
 			}
 		}
 	}

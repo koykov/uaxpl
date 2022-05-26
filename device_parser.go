@@ -19,59 +19,59 @@ const (
 )
 
 func (c *Ctx) parseDevice() bool {
-	if c.dtm&DeviceTypeCamera != 0 {
+	if c.maskDeviceType&DeviceTypeCamera != 0 {
 		if c.evalDevice(dpCamera) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeCamera
+			c.deviceType = DeviceTypeCamera
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeCarBrowser != 0 {
+	if c.maskDeviceType&DeviceTypeCarBrowser != 0 {
 		if c.evalDevice(dpCarBrowser) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeCarBrowser
+			c.deviceType = DeviceTypeCarBrowser
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeConsole != 0 {
+	if c.maskDeviceType&DeviceTypeConsole != 0 {
 		if c.evalDevice(dpConsole) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeConsole
+			c.deviceType = DeviceTypeConsole
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeMobile != 0 {
+	if c.maskDeviceType&DeviceTypeMobile != 0 {
 		if c.evalDevice(dpMobile) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeMobile
+			c.deviceType = DeviceTypeMobile
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeNotebook != 0 {
+	if c.maskDeviceType&DeviceTypeNotebook != 0 {
 		if c.evalDevice(dpNotebook) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeNotebook
+			c.deviceType = DeviceTypeNotebook
 			return true
 		}
 	}
-	if c.dtm&DeviceTypePortableMediaPlayer != 0 {
+	if c.maskDeviceType&DeviceTypePortableMediaPlayer != 0 {
 		if c.evalDevice(dpPortableMediaPlayer) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypePortableMediaPlayer
+			c.deviceType = DeviceTypePortableMediaPlayer
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeShellTV != 0 {
+	if c.maskDeviceType&DeviceTypeShellTV != 0 {
 		if c.evalDevice(dpShellTV) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeShellTV
+			c.deviceType = DeviceTypeShellTV
 			return true
 		}
 	}
-	if c.dtm&DeviceTypeTV != 0 {
+	if c.maskDeviceType&DeviceTypeTV != 0 {
 		if c.evalDevice(dpTV) {
 			c.SetBit(flagDeviceDetect, true)
-			c.dt = DeviceTypeTV
+			c.deviceType = DeviceTypeTV
 			return true
 		}
 	}
@@ -101,7 +101,7 @@ func (c *Ctx) evalDevice(idx int) bool {
 		}
 	}
 	if x != nil {
-		c.bne = x.ne
+		c.brandName64 = x.ne
 
 		if x.sm != -1 {
 			sm := &__dr_dm[x.sm]
@@ -138,7 +138,7 @@ func (c *Ctx) deviceBufMNE(e entry.Entry64) {
 	lo1 := uint32(len(c.buf))
 	c.buf = append(c.buf, raw...)
 	hi1 := uint32(len(c.buf))
-	c.mne.Encode(lo1, hi1)
+	c.modelName64.Encode(lo1, hi1)
 }
 
 func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
@@ -160,11 +160,11 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 		}
 
 		hi1 := uint32(len(c.buf))
-		c.mne.Encode(lo1, hi1)
+		c.modelName64.Encode(lo1, hi1)
 		return
 	}
 	lo1 := uint32(len(c.buf))
 	c.buf = append(c.buf, raw...)
 	hi1 := uint32(len(c.buf))
-	c.mne.Encode(lo1, hi1)
+	c.modelName64.Encode(lo1, hi1)
 }

@@ -24,33 +24,33 @@ type Ctx struct {
 	bitset.Bitset
 	src, buf []byte
 
-	ctm ClientType
-	dtm DeviceType
+	maskClientType ClientType
+	maskDeviceType DeviceType
 
-	hh uint64
+	headerHash uint64
 
-	ct  ClientType
-	cne entry.Entry64
-	cve entry.Entry64
-	cv  Version
+	clientType      ClientType
+	clientName64    entry.Entry64
+	clientVersion64 entry.Entry64
+	clientVersion   Version
 
-	ene entry.Entry64
-	eve entry.Entry64
-	ev  Version
+	engineName64    entry.Entry64
+	engineVersion64 entry.Entry64
+	engineVersion   Version
 
-	dt  DeviceType
-	bne entry.Entry64
-	mne entry.Entry64
+	deviceType  DeviceType
+	brandName64 entry.Entry64
+	modelName64 entry.Entry64
 
-	os  entry.Entry64
-	ove entry.Entry64
-	ov  Version
+	osName64    entry.Entry64
+	osVersion64 entry.Entry64
+	osVersion   Version
 }
 
 func NewCtx() *Ctx {
 	ctx := Ctx{
-		ctm: ClientTypeAll,
-		dtm: DeviceTypeAll,
+		maskClientType: ClientTypeAll,
+		maskDeviceType: DeviceTypeAll,
 	}
 	return &ctx
 }
@@ -63,7 +63,7 @@ func (c *Ctx) SetUserAgent(src []byte) *Ctx {
 
 func (c *Ctx) SetRequestedWith(header string) *Ctx {
 	if len(header) > 0 {
-		c.hh = fnv.Hash64String(header)
+		c.headerHash = fnv.Hash64String(header)
 	}
 	return c
 }
@@ -73,12 +73,12 @@ func (c *Ctx) SetUserAgentStr(src string) *Ctx {
 }
 
 func (c *Ctx) FilterClientType(mask ClientType) *Ctx {
-	c.ctm = mask
+	c.maskClientType = mask
 	return c
 }
 
 func (c *Ctx) FilterDeviceType(mask DeviceType) *Ctx {
-	c.dtm = mask
+	c.maskDeviceType = mask
 	return c
 }
 
@@ -90,7 +90,7 @@ func (c *Ctx) GetClientType() ClientType {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	return c.ct
+	return c.clientType
 }
 
 func (c *Ctx) GetBrowser() string {
@@ -101,13 +101,13 @@ func (c *Ctx) GetBrowser() string {
 		e   entry.Entry64
 		buf []byte
 	)
-	if c.hh != 0 {
-		if he, ok := __hr_idx[c.hh]; ok {
+	if c.headerHash != 0 {
+		if he, ok := __hr_idx[c.headerHash]; ok {
 			e = he
 			buf = __hr_buf
 		}
-	} else if c.cne > 0 {
-		e = c.cne
+	} else if c.clientName64 > 0 {
+		e = c.clientName64
 		buf = __cr_buf
 	}
 	if e > 0 {
@@ -118,19 +118,19 @@ func (c *Ctx) GetBrowser() string {
 }
 
 func (c *Ctx) GetBrowserVersion() *Version {
-	if !c.cv.p {
+	if !c.clientVersion.p {
 		raw := c.GetBrowserVersionString()
-		_ = c.cv.Parse(raw)
+		_ = c.clientVersion.Parse(raw)
 	}
-	return &c.cv
+	return &c.clientVersion
 }
 
 func (c *Ctx) GetBrowserVersionString() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	if c.cve > 0 {
-		lo, hi := c.cve.Decode()
+	if c.clientVersion64 > 0 {
+		lo, hi := c.clientVersion64.Decode()
 		raw := c.src[lo:hi]
 		if p := bytealg.IndexByteAtLR(raw, '/', 0); p != -1 {
 			raw = raw[p+1:]
@@ -144,27 +144,27 @@ func (c *Ctx) GetEngine() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	if c.ene > 0 {
-		lo, hi := c.ene.Decode()
+	if c.engineName64 > 0 {
+		lo, hi := c.engineName64.Decode()
 		return fastconv.B2S(__cr_buf[lo:hi])
 	}
 	return ""
 }
 
 func (c *Ctx) GetEngineVersion() *Version {
-	if !c.ev.p {
+	if !c.engineVersion.p {
 		raw := c.GetEngineVersionString()
-		_ = c.ev.Parse(raw)
+		_ = c.engineVersion.Parse(raw)
 	}
-	return &c.ev
+	return &c.engineVersion
 }
 
 func (c *Ctx) GetEngineVersionString() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
 	}
-	if c.eve > 0 {
-		lo, hi := c.eve.Decode()
+	if c.engineVersion64 > 0 {
+		lo, hi := c.engineVersion64.Decode()
 		return fastconv.B2S(c.src[lo:hi])
 	}
 	return ""
@@ -174,15 +174,15 @@ func (c *Ctx) GetDeviceType() DeviceType {
 	if !c.CheckBit(flagDeviceDetect) {
 		c.parseDevice()
 	}
-	return c.dt
+	return c.deviceType
 }
 
 func (c *Ctx) GetBrand() string {
 	if !c.CheckBit(flagDeviceDetect) {
 		c.parseDevice()
 	}
-	if c.bne != 0 {
-		lo, hi := c.bne.Decode()
+	if c.brandName64 != 0 {
+		lo, hi := c.brandName64.Decode()
 		raw := __dr_buf[lo:hi]
 		return fastconv.B2S(raw)
 	}
@@ -193,8 +193,8 @@ func (c *Ctx) GetModel() string {
 	if !c.CheckBit(flagDeviceDetect) {
 		c.parseDevice()
 	}
-	if c.mne != 0 {
-		lo, hi := c.mne.Decode()
+	if c.modelName64 != 0 {
+		lo, hi := c.modelName64.Decode()
 		raw := c.buf[lo:hi]
 		return fastconv.B2S(raw)
 	}
@@ -205,12 +205,12 @@ func (c *Ctx) GetOS() string {
 	if !c.CheckBit(flagOSDetect) {
 		c.parseOS()
 	}
-	if c.os != 0 {
+	if c.osName64 != 0 {
 		buf := __or_buf
 		if c.CheckBit(flagOSBufSrc) {
 			buf = c.src
 		}
-		lo, hi := c.os.Decode()
+		lo, hi := c.osName64.Decode()
 		raw := buf[lo:hi]
 		return fastconv.B2S(raw)
 	}
@@ -218,23 +218,23 @@ func (c *Ctx) GetOS() string {
 }
 
 func (c *Ctx) GetOSVersion() *Version {
-	if !c.ov.p {
+	if !c.osVersion.p {
 		raw := c.GetOSVersionString()
-		_ = c.ov.Parse(raw)
+		_ = c.osVersion.Parse(raw)
 	}
-	return &c.ov
+	return &c.osVersion
 }
 
 func (c *Ctx) GetOSVersionString() string {
 	if !c.CheckBit(flagOSDetect) {
 		c.parseOS()
 	}
-	if c.ove > 0 {
+	if c.osVersion64 > 0 {
 		buf := c.src
 		if c.CheckBit(flagOSVerBufSrc) {
 			buf = __or_buf
 		}
-		lo, hi := c.ove.Decode()
+		lo, hi := c.osVersion64.Decode()
 		raw := buf[lo:hi]
 		if bytes.IndexByte(raw, '_') != -1 {
 			off := len(c.buf)
@@ -255,8 +255,8 @@ func (c *Ctx) GetOSVersionString() string {
 
 func (c *Ctx) Reset() {
 	c.reset()
-	c.ctm = ClientTypeAll
-	c.dtm = DeviceTypeAll
+	c.maskClientType = ClientTypeAll
+	c.maskDeviceType = DeviceTypeAll
 }
 
 func (c *Ctx) reset() {
@@ -264,22 +264,22 @@ func (c *Ctx) reset() {
 	c.src = c.src[:0]
 	c.buf = c.buf[:0]
 
-	c.hh = 0
+	c.headerHash = 0
 
-	c.ct = 0
-	c.cne.Reset()
-	c.cve.Reset()
-	c.cv.Reset()
+	c.clientType = 0
+	c.clientName64.Reset()
+	c.clientVersion64.Reset()
+	c.clientVersion.Reset()
 
-	c.ene.Reset()
-	c.eve.Reset()
-	c.ev.Reset()
+	c.engineName64.Reset()
+	c.engineVersion64.Reset()
+	c.engineVersion.Reset()
 
-	c.dt = 0
-	c.bne.Reset()
-	c.mne.Reset()
+	c.deviceType = 0
+	c.brandName64.Reset()
+	c.modelName64.Reset()
 
-	c.os.Reset()
-	c.ove.Reset()
-	c.ov.Reset()
+	c.osName64.Reset()
+	c.osVersion64.Reset()
+	c.osVersion.Reset()
 }

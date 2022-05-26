@@ -15,45 +15,45 @@ const (
 )
 
 func (c *Ctx) parseClient() bool {
-	if c.ctm&ClientTypeBrowser != 0 {
+	if c.maskClientType&ClientTypeBrowser != 0 {
 		if c.evalClient(cpBrowser) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeBrowser
+			c.clientType = ClientTypeBrowser
 			return true
 		}
 	}
-	if c.ctm&ClientTypeFeedReader != 0 {
+	if c.maskClientType&ClientTypeFeedReader != 0 {
 		if c.evalClient(cpFeedReader) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeFeedReader
+			c.clientType = ClientTypeFeedReader
 			return true
 		}
 	}
-	if c.ctm&ClientTypeMobileApp != 0 {
+	if c.maskClientType&ClientTypeMobileApp != 0 {
 		if c.evalClient(cpMobileApp) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeMobileApp
+			c.clientType = ClientTypeMobileApp
 			return true
 		}
 	}
-	if c.ctm&ClientTypeMediaPlayer != 0 {
+	if c.maskClientType&ClientTypeMediaPlayer != 0 {
 		if c.evalClient(cpMediaPlayer) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeMediaPlayer
+			c.clientType = ClientTypeMediaPlayer
 			return true
 		}
 	}
-	if c.ctm&ClientTypePIM != 0 {
+	if c.maskClientType&ClientTypePIM != 0 {
 		if c.evalClient(cpPIM) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypePIM
+			c.clientType = ClientTypePIM
 			return true
 		}
 	}
-	if c.ctm&ClientTypeLibrary != 0 {
+	if c.maskClientType&ClientTypeLibrary != 0 {
 		if c.evalClient(cpLibrary) {
 			c.SetBit(flagClientDetect, true)
-			c.ct = ClientTypeLibrary
+			c.clientType = ClientTypeLibrary
 			return true
 		}
 	}
@@ -76,7 +76,7 @@ func (c *Ctx) evalClient(idx int) bool {
 						lo1, hi1 := m[x.vi*2], m[x.vi*2+1]
 						if lo1 != -1 && hi1 != -1 {
 							lo, hi := uint32(m[x.vi*2]), uint32(m[x.vi*2+1])
-							c.cve.Encode(lo, hi)
+							c.clientVersion64.Encode(lo, hi)
 						}
 					}
 				}
@@ -93,7 +93,7 @@ func (c *Ctx) evalClient(idx int) bool {
 	}
 
 	if x != nil {
-		c.cne = x.be
+		c.clientName64 = x.be
 
 		// Engine detection.
 		if idx == cpBrowser {
