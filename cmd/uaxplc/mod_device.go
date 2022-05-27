@@ -65,7 +65,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 	_, _ = w.WriteString("import (\n\"regexp\"\n)\n\n")
 	_, _ = w.WriteString("var (\n")
 
-	_, _ = w.WriteString("__dr_idx = [" + strconv.Itoa(len(files)) + "][]dr{\n")
+	_, _ = w.WriteString("__dr_idx = [" + strconv.Itoa(len(files)) + "][]deviceTuple{\n")
 
 	for i := 0; i < len(files); i++ {
 		bufST = bufST[:0]
@@ -96,67 +96,67 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 		for j := 0; j < len(bufST); j++ {
 			brand := &bufST[j]
 			var (
-				ne entry.Entry64 // brand name index
-				re = int32(-1)   // regex index
-				si entry.Entry64 // string index
-				sm = int32(-1)   // single model index
-				me entry.Entry64 // models index
+				brand64  entry.Entry64 // brand name index
+				matchRI  = int32(-1)   // regex index
+				match64  entry.Entry64 // string index
+				modelSI  = int32(-1)   // single model index
+				models64 entry.Entry64 // models index
 			)
-			ne = buf.add(brand.Name)
+			brand64 = buf.add(brand.Name)
 
 			rs := brand.Regex
 			if !isRegex(rs) {
-				si = buf.add(brand.Regex)
+				match64 = buf.add(brand.Regex)
 			} else {
 				rs = normalizeRegex(rs)
 				if _, err = regexp.Compile(rs); err == nil {
 					bufRE = append(bufRE, rs)
-					re = int32(len(bufRE) - 1)
+					matchRI = int32(len(bufRE) - 1)
 				} else {
 					log.Printf("regexp error '%s' on '%s'", err, rs)
 				}
 			}
 
 			var (
-				re1 = int32(-1)   // regex index
-				si1 entry.Entry64 // string index
-				ne1 entry.Entry64 // model name index
+				matchRI1 = int32(-1)   // regex index
+				match641 entry.Entry64 // string index
+				model641 entry.Entry64 // model name index
 			)
 			if len(brand.Models) > 0 {
 				meLO := uint32(len(bufDM))
 				for k := 0; k < len(brand.Models); k++ {
-					re1 = int32(-1)
-					si1.Reset()
-					ne1.Reset()
+					matchRI1 = int32(-1)
+					match641.Reset()
+					model641.Reset()
 
 					model := &brand.Models[k]
 					rs1 := model.Regex
 					if !isRegex(rs1) {
-						si1 = buf.add(model.Regex)
+						match641 = buf.add(model.Regex)
 					} else {
 						rs1 = normalizeRegex(rs1)
 						if _, err = regexp.Compile(rs1); err == nil {
 							bufRE = append(bufRE, rs1)
-							re1 = int32(len(bufRE) - 1)
+							matchRI1 = int32(len(bufRE) - 1)
 						} else {
 							log.Printf("regexp error '%s' on '%s'", err, rs)
 						}
 					}
-					ne1 = buf.add(model.Model)
-					bufDM = append(bufDM, fmt.Sprintf("dm{re:%s,si:%s,ne:%s}",
-						hex(re1), hex(si1), hex(ne1)))
+					model641 = buf.add(model.Model)
+					bufDM = append(bufDM, fmt.Sprintf("modelTuple{matchRI:%s,match64:%s,model64:%s}",
+						hex(matchRI1), hex(match641), hex(model641)))
 				}
 				meHI := uint32(len(bufDM))
-				me.Encode(meLO, meHI)
+				models64.Encode(meLO, meHI)
 			} else if len(brand.Model) > 0 {
-				ne1 = buf.add(brand.Model)
-				bufDM = append(bufDM, fmt.Sprintf("dm{re:%s,si:%s,ne:%s}",
-					hex(re1), hex(si1), hex(ne1)))
-				sm = int32(len(bufDM)) - 1
+				model641 = buf.add(brand.Model)
+				bufDM = append(bufDM, fmt.Sprintf("modelTuple{matchRI:%s,match64:%s,model64:%s}",
+					hex(matchRI1), hex(match641), hex(model641)))
+				modelSI = int32(len(bufDM)) - 1
 			}
 
-			bufDR = append(bufDR, fmt.Sprintf("dr{ne:%s,re:%s,si:%s,sm:%s,me:%s},",
-				hex(ne), hex(re), hex(si), hex(sm), hex(me)))
+			bufDR = append(bufDR, fmt.Sprintf("deviceTuple{brand64:%s,matchRI:%s,match64:%s,modelSI:%s,models64:%s},",
+				hex(brand64), hex(matchRI), hex(match64), hex(modelSI), hex(models64)))
 		}
 
 		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")
@@ -169,7 +169,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 	}
 	_, _ = w.WriteString("}\n")
 
-	_, _ = w.WriteString("__dr_dm = []dm{\n")
+	_, _ = w.WriteString("__dr_dm = []modelTuple{\n")
 	for i := 0; i < len(bufDM); i++ {
 		_, _ = w.WriteString(bufDM[i])
 		_, _ = w.WriteString(",\n")

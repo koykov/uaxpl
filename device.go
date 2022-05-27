@@ -17,18 +17,18 @@ const (
 		DeviceTypeCarBrowser | DeviceTypeCamera | DeviceTypePortableMediaPlayer | DeviceTypeMobile
 )
 
-type dr struct {
-	ne entry.Entry64 // brand name index
-	re int32         // regex index
-	si entry.Entry64 // string index
-	sm int32         // single model index
-	me entry.Entry64 // multiple models index
+type deviceTuple struct {
+	brand64  entry.Entry64 // brand name index
+	matchRI  int32         // regex index
+	match64  entry.Entry64 // string index
+	modelSI  int32         // single model index
+	models64 entry.Entry64 // multiple models index
 }
 
-type dm struct {
-	re int32         // regex index
-	si entry.Entry64 // string index
-	ne entry.Entry64 // model name index
+type modelTuple struct {
+	matchRI int32         // regex index
+	match64 entry.Entry64 // string index
+	model64 entry.Entry64 // model name index
 }
 
 func (t DeviceType) String() string {

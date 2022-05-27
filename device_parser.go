@@ -82,17 +82,17 @@ func (c *Ctx) evalDevice(idx int) bool {
 	ir := __dr_idx[idx]
 	irl := len(ir)
 	_ = ir[irl-1]
-	var x *dr
+	var x *deviceTuple
 	for i := 0; i < irl; i++ {
 		v := &ir[i]
-		if v.re >= 0 {
-			re := __dr_re[v.re]
+		if v.matchRI >= 0 {
+			re := __dr_re[v.matchRI]
 			if re.Match(c.src) {
 				x = v
 				break
 			}
 		} else {
-			lo, hi := v.si.Decode()
+			lo, hi := v.match64.Decode()
 			si := __dr_buf[lo:hi]
 			if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 				x = v
@@ -101,27 +101,27 @@ func (c *Ctx) evalDevice(idx int) bool {
 		}
 	}
 	if x != nil {
-		c.brandName64 = x.ne
+		c.brandName64 = x.brand64
 
-		if x.sm != -1 {
-			sm := &__dr_dm[x.sm]
-			c.deviceBufMNE(sm.ne)
-		} else if x.me != 0 {
-			lo, hi := x.me.Decode()
+		if x.modelSI != -1 {
+			sm := &__dr_dm[x.modelSI]
+			c.deviceBufMNE(sm.model64)
+		} else if x.models64 != 0 {
+			lo, hi := x.models64.Decode()
 			for i := lo; i < hi; i++ {
 				m := &__dr_dm[i]
-				if m.re >= 0 {
-					re := __dr_re[m.re]
+				if m.matchRI >= 0 {
+					re := __dr_re[m.matchRI]
 					if re.Match(c.src) {
 						// todo replace RE placeholders
-						c.deviceBufMNE1(m.ne, re)
+						c.deviceBufMNE1(m.model64, re)
 						break
 					}
-				} else if m.si != 0 {
-					lo1, hi1 := m.si.Decode()
+				} else if m.match64 != 0 {
+					lo1, hi1 := m.match64.Decode()
 					si := __dr_buf[lo1:hi1]
 					if len(si) > 0 && bytes.Index(c.src, si) != -1 {
-						c.deviceBufMNE(m.ne)
+						c.deviceBufMNE(m.model64)
 						break
 					}
 				}
