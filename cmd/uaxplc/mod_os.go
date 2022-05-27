@@ -69,25 +69,25 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 		tuple := &tuples[i]
 
 		var (
-			ne entry.Entry64 // name
-			ni = int8(-1)
-			re = int32(-1)   // regex index
-			si entry.Entry64 // substring
-			vi = int8(-1)    // version match index
-			vs entry.Entry64 // static version
-			vr entry.Entry64 // version ranges
+			name64     entry.Entry64 // name
+			nameSI     = int8(-1)
+			matchRI    = int32(-1)   // regex index
+			match64    entry.Entry64 // substring
+			versionSI  = int8(-1)    // version match index
+			version64  entry.Entry64 // static version
+			versions64 entry.Entry64 // version ranges
 		)
 
-		ni, ne = m.parseInx(tuple.Name, &buf)
+		nameSI, name64 = m.parseInx(tuple.Name, &buf)
 
 		rs := tuple.Regex
 		if !isRegex(rs) {
-			si = buf.add(tuple.Regex)
+			match64 = buf.add(tuple.Regex)
 		} else {
 			rs = normalizeRegex(rs)
 			if _, err = regexp.Compile(rs); err == nil {
 				bufRE = append(bufRE, rs)
-				re = int32(len(bufRE) - 1)
+				matchRI = int32(len(bufRE) - 1)
 			} else {
 				log.Printf("regexp error '%s' on '%s'", err, rs)
 			}
@@ -98,47 +98,47 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 			for j := 0; j < len(tuple.Versions); j++ {
 				tv := &tuple.Versions[j]
 				var (
-					re1 = int32(-1)   // regex index
-					si1 entry.Entry64 // substring
-					vi1 = int8(-1)    // version match index
-					vs1 entry.Entry64 // static version
+					matchRI1   = int32(-1)   // regex index
+					match641   entry.Entry64 // substring
+					versionSI1 = int8(-1)    // version match index
+					version641 entry.Entry64 // static version
 				)
 				if !isRegex(tv.Regex) {
-					si1 = buf.add(tv.Regex)
+					match641 = buf.add(tv.Regex)
 				} else {
 					rs1 := normalizeRegex(tv.Regex)
 					if _, err = regexp.Compile(rs1); err == nil {
 						bufRE = append(bufRE, rs1)
-						re1 = int32(len(bufRE) - 1)
+						matchRI1 = int32(len(bufRE) - 1)
 					} else {
 						log.Printf("regexp error '%s' on '%s'", err, rs)
 					}
 				}
-				vi1, vs1 = m.parseInx(tv.Version, &buf)
-				bufOV = append(bufOV, fmt.Sprintf("ov{re:%s,si:%s,vi:%s,vs:%s},",
-					hex(re1), hex(si1), hex(vi1), hex(vs1)))
+				versionSI1, version641 = m.parseInx(tv.Version, &buf)
+				bufOV = append(bufOV, fmt.Sprintf("osVersionTuple{matchRI:%s,match64:%s,versionSI:%s,version64:%s},",
+					hex(matchRI1), hex(match641), hex(versionSI1), hex(version641)))
 			}
 			hiOV := uint32(len(bufOV))
-			vr.Encode(loOV, hiOV)
+			versions64.Encode(loOV, hiOV)
 		} else if len(tuple.Version) > 0 {
-			vi, vs = m.parseInx(tuple.Version, &buf)
+			versionSI, version64 = m.parseInx(tuple.Version, &buf)
 		}
 
-		bufOR = append(bufOR, fmt.Sprintf("or{ne:%s,ni:%s,re:%s,si:%s,vi:%s,vs:%s,vr:%s},",
-			hex(ne), hex(ni), hex(re), hex(si), hex(vi), hex(vs), hex(vr)))
+		bufOR = append(bufOR, fmt.Sprintf("osTuple{name64:%s,nameSI:%s,matchRI:%s,match64:%s,versionSI:%s,version64:%s,versions64:%s},",
+			hex(name64), hex(nameSI), hex(matchRI), hex(match64), hex(versionSI), hex(version64), hex(versions64)))
 	}
 
 	_, _ = w.WriteString("import (\n\"regexp\"\n)\n\n")
 	_, _ = w.WriteString("var (\n")
 
-	_, _ = w.WriteString("__or_os = []or{\n")
+	_, _ = w.WriteString("__or_os = []osTuple{\n")
 	for i := 0; i < len(bufOR); i++ {
 		_, _ = w.WriteString(bufOR[i])
 		_ = w.WriteByte('\n')
 	}
 	_, _ = w.WriteString("}\n")
 
-	_, _ = w.WriteString("__or_ov = []ov{\n")
+	_, _ = w.WriteString("__or_ov = []osVersionTuple{\n")
 	for i := 0; i < len(bufOV); i++ {
 		_, _ = w.WriteString(bufOV[i])
 		_ = w.WriteByte('\n')
