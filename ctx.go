@@ -27,7 +27,7 @@ type Ctx struct {
 	maskClientType ClientType
 	maskDeviceType DeviceType
 
-	headerHash uint64
+	hintHash uint64
 
 	clientType      ClientType
 	clientName64    entry.Entry64
@@ -63,7 +63,7 @@ func (c *Ctx) SetUserAgent(src []byte) *Ctx {
 
 func (c *Ctx) SetRequestedWith(header string) *Ctx {
 	if len(header) > 0 {
-		c.headerHash = fnv.Hash64String(header)
+		c.hintHash = fnv.Hash64String(header)
 	}
 	return c
 }
@@ -101,8 +101,8 @@ func (c *Ctx) GetBrowser() string {
 		e   entry.Entry64
 		buf []byte
 	)
-	if c.headerHash != 0 {
-		if he, ok := __hr_idx[c.headerHash]; ok {
+	if c.hintHash != 0 {
+		if he, ok := __hr_idx[c.hintHash]; ok {
 			e = he
 			buf = __hr_buf
 		}
@@ -264,7 +264,7 @@ func (c *Ctx) reset() {
 	c.src = c.src[:0]
 	c.buf = c.buf[:0]
 
-	c.headerHash = 0
+	c.hintHash = 0
 
 	c.clientType = 0
 	c.clientName64.Reset()
