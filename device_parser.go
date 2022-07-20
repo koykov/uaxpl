@@ -18,6 +18,20 @@ const (
 	dpTV                  = 7
 )
 
+var (
+	desktopOS = map[string]struct{}{
+		"AmigaOS":     {},
+		"IBM":         {},
+		"GNU/Linux":   {},
+		"Mac":         {},
+		"Unix":        {},
+		"Windows":     {},
+		"BeOS":        {},
+		"Chrome OS":   {},
+		"Chromium OS": {},
+	}
+)
+
 func (c *Ctx) parseDevice() bool {
 	if c.maskDeviceType&DeviceTypeCamera != 0 {
 		if c.evalDevice(dpCamera) {
@@ -78,7 +92,17 @@ func (c *Ctx) parseDevice() bool {
 	return false
 }
 
-func (c *Ctx) evalDevice(idx int) bool {
+func (c *Ctx) evalDevice(idx int) (ok bool) {
+	defer func() {
+		if ok || idx != dpNotebook {
+			return
+		}
+		os := c.GetOS()
+		if _, ok1 := desktopOS[os]; ok1 {
+			c.SetBit(flagDeviceForceDesktop, true)
+		}
+	}()
+
 	ir := __dr_idx[idx]
 	irl := len(ir)
 	_ = ir[irl-1]
@@ -127,9 +151,9 @@ func (c *Ctx) evalDevice(idx int) bool {
 				}
 			}
 		}
-		return true
+		ok = true
 	}
-	return false
+	return
 }
 
 func (c *Ctx) deviceBufMNE(e entry.Entry64) {

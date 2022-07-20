@@ -18,6 +18,7 @@ const (
 	flagOSDetect
 	flagOSBufSrc
 	flagOSVerBufSrc
+	flagDeviceForceDesktop
 )
 
 type Ctx struct {
@@ -173,6 +174,9 @@ func (c *Ctx) GetEngineVersionString() string {
 func (c *Ctx) GetDeviceType() DeviceType {
 	if !c.CheckBit(flagDeviceDetect) {
 		c.parseDevice()
+	}
+	if c.CheckBit(flagDeviceForceDesktop) {
+		return DeviceTypeNotebook
 	}
 	return c.deviceType
 }
