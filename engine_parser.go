@@ -2,8 +2,13 @@ package uaxpl
 
 import (
 	"bytes"
+	"regexp"
 
 	"github.com/koykov/fastconv"
+)
+
+var (
+	forceEngineBlinkRE = regexp.MustCompile(`(?i)Chrome/.+ Safari/537.36`)
 )
 
 func (c *Ctx) evalEngine(cri *clientTuple) {
@@ -47,6 +52,10 @@ func (c *Ctx) evalEngine(cri *clientTuple) {
 				c.engineVersion64.Encode(uint32(m[2]), uint32(m[3]))
 			}
 		}
+	}
+	if c.engineName64 == 0 && forceEngineBlinkRE.Match(c.src) {
+		c.SetBit(flagEngineForceBlink, true)
+		return
 	}
 }
 

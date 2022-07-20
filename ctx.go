@@ -19,6 +19,7 @@ const (
 	flagOSBufSrc
 	flagOSVerBufSrc
 	flagDeviceForceDesktop
+	flagEngineForceBlink
 )
 
 type Ctx struct {
@@ -144,6 +145,9 @@ func (c *Ctx) GetBrowserVersionString() string {
 func (c *Ctx) GetEngine() string {
 	if !c.CheckBit(flagClientDetect) {
 		c.parseClient()
+	}
+	if c.CheckBit(flagEngineForceBlink) {
+		return "Blink"
 	}
 	if c.engineName64 > 0 {
 		lo, hi := c.engineName64.Decode()
