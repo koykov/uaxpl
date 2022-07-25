@@ -90,6 +90,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				matchRI   = int32(-1)   // regex index
 				match64   entry.Entry64 // string index
 				browser64 entry.Entry64 // browser name index
+				version64 entry.Entry64 // browser version index
 				browserVI = int8(-1)    // version index
 				engine64  entry.Entry64 // default engine
 				engineFI  = int32(-1)   // engine func index
@@ -112,9 +113,13 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 			if len(tuple.Name) > 0 {
 				browser64 = buf.add(tuple.Name)
 			}
-			if len(tuple.Version) > 0 && tuple.Version[0] == '$' {
-				n, _ := strconv.Atoi(tuple.Version[1:])
-				browserVI = int8(n)
+			if len(tuple.Version) > 0 {
+				if tuple.Version[0] == '$' {
+					n, _ := strconv.Atoi(tuple.Version[1:])
+					browserVI = int8(n)
+				} else {
+					version64 = buf.add(tuple.Version)
+				}
 			}
 
 			if tuple.Engine != nil {
@@ -139,8 +144,8 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				type64 = buf.add(tuple.Type)
 			}
 
-			bufCR = append(bufCR, fmt.Sprintf("clientTuple{matchRI:%s,match64:%s,browser64:%s,browserVI:%s,engine64:%s,engineFI:%s,url64:%s,type64:%s},",
-				hex(matchRI), hex(match64), hex(browser64), hex(browserVI), hex(engine64), hex(engineFI), hex(url64), hex(type64)))
+			bufCR = append(bufCR, fmt.Sprintf("clientTuple{matchRI:%s,match64:%s,browser64:%s,version64:%s,browserVI:%s,engine64:%s,engineFI:%s,url64:%s,type64:%s},",
+				hex(matchRI), hex(match64), hex(browser64), hex(version64), hex(browserVI), hex(engine64), hex(engineFI), hex(url64), hex(type64)))
 		}
 
 		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")

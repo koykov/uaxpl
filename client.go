@@ -23,6 +23,7 @@ type clientTuple struct {
 	matchRI   int32         // matching regex index
 	match64   entry.Entry64 // static string matching
 	browser64 entry.Entry64 // browser name
+	version64 entry.Entry64 // browser version
 	browserVI int8          // version index (from regex matches)
 	engine64  entry.Entry64 // default engine
 	engineFI  int32         // engine func index

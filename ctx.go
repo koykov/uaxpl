@@ -16,8 +16,11 @@ const (
 	flagClientDetect = iota
 	flagDeviceDetect
 	flagOSDetect
+
 	flagOSBufSrc
 	flagOSVerBufSrc
+	flagVerConstSrc
+
 	flagDeviceForceDesktop
 	flagEngineForceBlink
 )
@@ -132,8 +135,12 @@ func (c *Ctx) GetBrowserVersionString() string {
 		c.parseClient()
 	}
 	if c.clientVersion64 > 0 {
+		buf := c.src
+		if c.CheckBit(flagVerConstSrc) {
+			buf = __cr_buf
+		}
 		lo, hi := c.clientVersion64.Decode()
-		raw := c.src[lo:hi]
+		raw := buf[lo:hi]
 		if p := bytealg.IndexByteAtLR(raw, '/', 0); p != -1 {
 			raw = raw[p+1:]
 		}

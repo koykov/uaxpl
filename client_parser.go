@@ -71,7 +71,10 @@ func (c *Ctx) evalClient(idx int) bool {
 			re := __cr_re[v.matchRI]
 			if re.Match(c.src) {
 				x = v
-				if x.browserVI != -1 {
+				if x.version64 != 0 {
+					c.clientVersion64 = x.version64
+					c.SetBit(flagVerConstSrc, true)
+				} else if x.browserVI != -1 {
 					if m := re.FindSubmatchIndex(c.src); len(m) > int(x.browserVI) {
 						lo1, hi1 := m[x.browserVI*2], m[x.browserVI*2+1]
 						if lo1 != -1 && hi1 != -1 {
