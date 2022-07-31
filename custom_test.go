@@ -49,7 +49,7 @@ func TestCustomParse(t *testing.T) {
 				buf = append(buf, fmt.Errorf("browser mismatch: need '%s' got '%s'", stage.Client.Name, b))
 			}
 			if bv := ctx.GetBrowserVersionString(); len(stage.Client.Version) > 0 && bv != stage.Client.Version {
-				buf = append(buf, fmt.Errorf("browser version meismatch: need '%s' got '%s'", stage.Client.Version, bv))
+				buf = append(buf, fmt.Errorf("browser version mismatch: need '%s' got '%s'", stage.Client.Version, bv))
 			}
 			if e := ctx.GetEngine(); len(stage.Client.Engine) > 0 && e != stage.Client.Engine {
 				buf = append(buf, fmt.Errorf("engine mismatch: need '%s' got '%s'", stage.Client.Engine, e))
@@ -85,6 +85,9 @@ func TestCustomParse(t *testing.T) {
 		return nil
 	}
 
+	t.Run("single", func(t *testing.T) {
+		_ = testDS("testdata/custom/single.json")
+	})
 	t.Run("ds0", func(t *testing.T) {
 		_ = testDS("testdata/custom/ds0.json")
 	})

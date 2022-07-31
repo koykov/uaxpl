@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/koykov/entry"
+	"github.com/koykov/fastconv"
 )
 
 const (
@@ -34,65 +35,67 @@ var (
 
 func (c *Ctx) parseDevice() bool {
 	if c.maskDeviceType&DeviceTypeCamera != 0 {
-		if c.evalDevice(dpCamera) {
+		if typ, ok := c.evalDevice(dpCamera, DeviceTypeCamera); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeCamera
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeCarBrowser != 0 {
-		if c.evalDevice(dpCarBrowser) {
+		if typ, ok := c.evalDevice(dpCarBrowser, DeviceTypeCarBrowser); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeCarBrowser
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeConsole != 0 {
-		if c.evalDevice(dpConsole) {
+		if typ, ok := c.evalDevice(dpConsole, DeviceTypeConsole); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeConsole
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeMobile != 0 {
-		if c.evalDevice(dpMobile) {
+		if typ, ok := c.evalDevice(dpMobile, DeviceTypeMobile); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeMobile
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeNotebook != 0 {
-		if c.evalDevice(dpNotebook) {
+		if typ, ok := c.evalDevice(dpNotebook, DeviceTypeNotebook); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeNotebook
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypePortableMediaPlayer != 0 {
-		if c.evalDevice(dpPortableMediaPlayer) {
+		if typ, ok := c.evalDevice(dpPortableMediaPlayer, DeviceTypeNotebook); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypePortableMediaPlayer
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeShellTV != 0 {
-		if c.evalDevice(dpShellTV) {
+		if typ, ok := c.evalDevice(dpShellTV, DeviceTypeShellTV); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeShellTV
+			c.deviceType = typ
 			return true
 		}
 	}
 	if c.maskDeviceType&DeviceTypeTV != 0 {
-		if c.evalDevice(dpTV) {
+		if typ, ok := c.evalDevice(dpTV, DeviceTypeTV); ok {
 			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = DeviceTypeTV
+			c.deviceType = typ
 			return true
 		}
 	}
 	return false
 }
 
-func (c *Ctx) evalDevice(idx int) (ok bool) {
+func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) {
+	typ = defType
+
 	defer func() {
 		if ok || idx != dpNotebook {
 			return
@@ -130,6 +133,7 @@ func (c *Ctx) evalDevice(idx int) (ok bool) {
 		if x.modelSI != -1 {
 			sm := &__dr_dm[x.modelSI]
 			c.deviceBufMNE(sm.model64)
+			typ = c.deviceEvalType(sm.type64, defType)
 		} else if x.models64 != 0 {
 			lo, hi := x.models64.Decode()
 			for i := lo; i < hi; i++ {
@@ -137,8 +141,8 @@ func (c *Ctx) evalDevice(idx int) (ok bool) {
 				if m.matchRI >= 0 {
 					re := __dr_re[m.matchRI]
 					if re.Match(c.src) {
-						// todo replace RE placeholders
 						c.deviceBufMNE1(m.model64, re)
+						typ = c.deviceEvalType(m.type64, defType)
 						break
 					}
 				} else if m.match64 != 0 {
@@ -146,10 +150,13 @@ func (c *Ctx) evalDevice(idx int) (ok bool) {
 					si := __dr_buf[lo1:hi1]
 					if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 						c.deviceBufMNE(m.model64)
+						typ = c.deviceEvalType(m.type64, defType)
 						break
 					}
 				}
 			}
+		} else {
+			typ = c.deviceEvalType(x.type64, defType)
 		}
 		ok = true
 	}
@@ -191,4 +198,24 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 	c.buf = append(c.buf, raw...)
 	hi1 := uint32(len(c.buf))
 	c.modelName64.Encode(lo1, hi1)
+}
+
+func (c *Ctx) deviceEvalType(type64 entry.Entry64, defType DeviceType) DeviceType {
+	lo, hi := type64.Decode()
+	raw := fastconv.B2S(__dr_buf[lo:hi])
+	if len(raw) == 0 {
+		return defType
+	}
+	switch raw {
+	case "smartphone":
+		return DeviceTypeMobile
+	case "phablet":
+		return DeviceTypePhablet
+	case "tablet":
+		return DeviceTypeTablet
+	case "tv":
+		return DeviceTypeTV
+	default:
+		return defType
+	}
 }
