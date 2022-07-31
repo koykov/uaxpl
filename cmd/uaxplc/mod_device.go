@@ -28,8 +28,9 @@ type deviceBrand struct {
 }
 
 type deviceModel struct {
-	Regex string `yaml:"regex"`
-	Model string `yaml:"model"`
+	Regex  string `yaml:"regex"`
+	Model  string `yaml:"model"`
+	Device string `yaml:"device"`
 }
 
 type deviceModule struct{}
@@ -103,6 +104,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 		for j := 0; j < len(bufST); j++ {
 			brand := &bufST[j]
 			var (
+				type64   entry.Entry64
 				brand64  entry.Entry64 // brand name index
 				matchRI  = int32(-1)   // regex index
 				match64  entry.Entry64 // string index
@@ -110,6 +112,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 				models64 entry.Entry64 // models index
 			)
 			brand64 = buf.add(brand.Name)
+			type64 = buf.add(brand.Device)
 
 			rs := brand.Regex
 			if !isRegex(rs) {
@@ -125,6 +128,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 			}
 
 			var (
+				type641  entry.Entry64
 				matchRI1 = int32(-1)   // regex index
 				match641 entry.Entry64 // string index
 				model641 entry.Entry64 // model name index
@@ -132,6 +136,7 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 			if len(brand.Models) > 0 {
 				meLO := uint32(len(bufDM))
 				for k := 0; k < len(brand.Models); k++ {
+					type641.Reset()
 					matchRI1 = int32(-1)
 					match641.Reset()
 					model641.Reset()
@@ -149,21 +154,22 @@ func (m deviceModule) Compile(w moduleWriter, input, target string) (err error) 
 							log.Printf("regexp error '%s' on '%s'", err, rs)
 						}
 					}
+					type641 = buf.add(model.Device)
 					model641 = buf.add(model.Model)
-					bufDM = append(bufDM, fmt.Sprintf("modelTuple{matchRI:%s,match64:%s,model64:%s}",
-						hex(matchRI1), hex(match641), hex(model641)))
+					bufDM = append(bufDM, fmt.Sprintf("modelTuple{type64:%s,matchRI:%s,match64:%s,model64:%s}",
+						hex(type641), hex(matchRI1), hex(match641), hex(model641)))
 				}
 				meHI := uint32(len(bufDM))
 				models64.Encode(meLO, meHI)
 			} else if len(brand.Model) > 0 {
 				model641 = buf.add(brand.Model)
-				bufDM = append(bufDM, fmt.Sprintf("modelTuple{matchRI:%s,match64:%s,model64:%s}",
-					hex(matchRI1), hex(match641), hex(model641)))
+				bufDM = append(bufDM, fmt.Sprintf("modelTuple{type64:%s,matchRI:%s,match64:%s,model64:%s}",
+					hex(type641), hex(matchRI1), hex(match641), hex(model641)))
 				modelSI = int32(len(bufDM)) - 1
 			}
 
-			bufDR = append(bufDR, fmt.Sprintf("deviceTuple{brand64:%s,matchRI:%s,match64:%s,modelSI:%s,models64:%s},",
-				hex(brand64), hex(matchRI), hex(match64), hex(modelSI), hex(models64)))
+			bufDR = append(bufDR, fmt.Sprintf("deviceTuple{type64:%s,brand64:%s,matchRI:%s,match64:%s,modelSI:%s,models64:%s},",
+				hex(type64), hex(brand64), hex(matchRI), hex(match64), hex(modelSI), hex(models64)))
 		}
 
 		_, _ = w.WriteString("// " + filepath.Base(files[i]) + "\n")
