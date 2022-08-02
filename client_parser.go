@@ -15,13 +15,6 @@ const (
 )
 
 func (c *Ctx) parseClient() bool {
-	if c.maskClientType&ClientTypeBrowser != 0 {
-		if c.evalClient(cpBrowser) {
-			c.SetBit(flagClientDetect, true)
-			c.clientType = ClientTypeBrowser
-			return true
-		}
-	}
 	if c.maskClientType&ClientTypeFeedReader != 0 {
 		if c.evalClient(cpFeedReader) {
 			c.SetBit(flagClientDetect, true)
@@ -54,6 +47,13 @@ func (c *Ctx) parseClient() bool {
 		if c.evalClient(cpLibrary) {
 			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeLibrary
+			return true
+		}
+	}
+	if c.maskClientType&ClientTypeBrowser != 0 {
+		if c.evalClient(cpBrowser) {
+			c.SetBit(flagClientDetect, true)
+			c.clientType = ClientTypeBrowser
 			return true
 		}
 	}

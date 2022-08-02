@@ -1,0 +1,13 @@
+[
+  {
+	"user_agent": "Mozilla/5.0 (iPad; CPU OS 15_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/221.0.461030601 Mobile/15E148 Safari/604.1",
+	"client": {
+	  "type": "mobile app",
+	  "name": "Google Search App",
+	  "version": "221.0.461030601"
+	},
+	"device": {
+	  "os": "iPadOS"
+	}
+  }
+]
