@@ -55,20 +55,6 @@ func (c *Ctx) parseDevice() bool {
 			return true
 		}
 	}
-	if c.maskDeviceType&DeviceTypeMobile != 0 {
-		if typ, ok := c.evalDevice(dpMobile, DeviceTypeMobile); ok {
-			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = typ
-			return true
-		}
-	}
-	if c.maskDeviceType&DeviceTypeNotebook != 0 {
-		if typ, ok := c.evalDevice(dpNotebook, DeviceTypeNotebook); ok {
-			c.SetBit(flagDeviceDetect, true)
-			c.deviceType = typ
-			return true
-		}
-	}
 	if c.maskDeviceType&DeviceTypePortableMediaPlayer != 0 {
 		if typ, ok := c.evalDevice(dpPortableMediaPlayer, DeviceTypeNotebook); ok {
 			c.SetBit(flagDeviceDetect, true)
@@ -85,6 +71,20 @@ func (c *Ctx) parseDevice() bool {
 	}
 	if c.maskDeviceType&DeviceTypeTV != 0 {
 		if typ, ok := c.evalDevice(dpTV, DeviceTypeTV); ok {
+			c.SetBit(flagDeviceDetect, true)
+			c.deviceType = typ
+			return true
+		}
+	}
+	if c.maskDeviceType&DeviceTypeMobile != 0 {
+		if typ, ok := c.evalDevice(dpMobile, DeviceTypeMobile); ok {
+			c.SetBit(flagDeviceDetect, true)
+			c.deviceType = typ
+			return true
+		}
+	}
+	if c.maskDeviceType&DeviceTypeNotebook != 0 {
+		if typ, ok := c.evalDevice(dpNotebook, DeviceTypeNotebook); ok {
 			c.SetBit(flagDeviceDetect, true)
 			c.deviceType = typ
 			return true
