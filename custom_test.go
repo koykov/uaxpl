@@ -90,8 +90,11 @@ func TestCustomParse(t *testing.T) {
 		return nil
 	}
 
-	t.Run("single", func(t *testing.T) {
-		_ = testDS("testdata/custom/single.json")
+	t.Run("single0", func(t *testing.T) {
+		_ = testDS("testdata/custom/single0.json")
+	})
+	t.Run("single1", func(t *testing.T) {
+		_ = testDS("testdata/custom/single1.json")
 	})
 	t.Run("ds0", func(t *testing.T) {
 		_ = testDS("testdata/custom/ds0.json")

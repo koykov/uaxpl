@@ -1,0 +1,10 @@
+[
+  {
+	"user_agent": "Mozilla/5.0 (Linux; Android 11; moto g(9) play) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Mobile Safari/537.36",
+	"device": {
+	  "type": "smartphone",
+	  "brand": "Motorola",
+	  "model": "Moto g9"
+	}
+  }
+]
