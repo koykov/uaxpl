@@ -96,4 +96,21 @@ func TestCustomParse(t *testing.T) {
 	t.Run("ds0", func(t *testing.T) {
 		_ = testDS("testdata/custom/ds0.json")
 	})
+	t.Run("ds1", func(t *testing.T) {
+		var ds []string
+		contents, err := os.ReadFile("testdata/custom/ds1.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = json.Unmarshal(contents, &ds); err != nil {
+			t.Fatal(err)
+		}
+		ctx := Acquire()
+		defer Release(ctx)
+		for i := 0; i < len(ds); i++ {
+			ctx.SetUserAgentStr(ds[i])
+			_ = ctx.GetClientType()
+			_ = ctx.GetDeviceType()
+		}
+	})
 }

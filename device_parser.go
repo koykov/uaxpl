@@ -186,6 +186,10 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 		if len(m) <= i*2+1 {
 			return
 		}
+		lo2, hi2 := m[i*2], m[i*2+1]
+		if lo2 < 0 || hi2 < 0 {
+			return
+		}
 		r := c.src[m[i*2]:m[i*2+1]]
 		c.buf = append(c.buf, r...)
 		p = bytes.IndexByte(raw[p+1:], '$')
