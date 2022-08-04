@@ -12740,7 +12740,7 @@ var (
 		regexp.MustCompile(`(?i)CORN R([124])0`),
 		regexp.MustCompile(`(?i)CORN[_ ]X(4|55|5)`),
 		regexp.MustCompile(`(?i)COYOTE[ _]`),
-		regexp.MustCompile(`(?i)CUBOT|QUEST(?: LITE)?|(?:NOTE 7|NOTE 20(?: PRO)?|RAINBOW 2|KING_KONG_3|KINGKONG [57]|KINGKONG 5 Pro|ZORRO 001|KINGKONG[_ ]MINI2?|KING KONG CS|R15_PRO|S550 Pro| CHEETAH| [RX]19|X19 S|MAX 3)(?:[);/ ]|$)`),
+		regexp.MustCompile(`(?i)CUBOT|QUEST(?: LITE)?|(?:[^REDMITGA ]+NOTE 7|NOTE 20(?: PRO)?|RAINBOW 2|KING_KONG_3|KINGKONG [57]|KINGKONG 5 Pro|ZORRO 001|KINGKONG[_ ]MINI2?|KING KONG CS|R15_PRO|S550 Pro| CHEETAH| [RX]19|X19 S|MAX 3)(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)CHEETAH( 2)?`),
 		regexp.MustCompile(`(?i)KING[_ ]?KONG[_ ]([357])`),
 		regexp.MustCompile(`(?i)CUBOT[ _]Echo`),
