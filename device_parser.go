@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"regexp"
 
+	"github.com/koykov/bytealg"
 	"github.com/koykov/entry"
 	"github.com/koykov/fastconv"
 )
@@ -180,23 +181,26 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 		lo1 := uint32(len(c.buf))
 		c.buf = append(c.buf, raw[:p]...)
 		m := re.FindSubmatchIndex(c.src)
-	loop:
-		p1 := raw[p+1]
-		i := b2i(p1)
-		if len(m) <= i*2+1 {
-			return
+		for {
+			p1 := raw[p+1]
+			i := b2i(p1)
+			if len(m) <= i*2+1 {
+				break
+			}
+			lo2, hi2 := m[i*2], m[i*2+1]
+			if lo2 < 0 || hi2 < 0 {
+				break
+			}
+			r := c.src[m[i*2]:m[i*2+1]]
+			c.buf = append(c.buf, r...)
+			pp := p + 1
+			p = bytealg.IndexByteAtLR(raw, '$', pp)
+			if p != -1 {
+				continue
+			}
+			c.buf = append(c.buf, raw[pp+1:]...)
+			break
 		}
-		lo2, hi2 := m[i*2], m[i*2+1]
-		if lo2 < 0 || hi2 < 0 {
-			return
-		}
-		r := c.src[m[i*2]:m[i*2+1]]
-		c.buf = append(c.buf, r...)
-		p = bytes.IndexByte(raw[p+1:], '$')
-		if p != -1 {
-			goto loop
-		}
-
 		hi1 := uint32(len(c.buf))
 		c.modelName64.Encode(lo1, hi1)
 		return

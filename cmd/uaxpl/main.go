@@ -24,7 +24,7 @@ func main() {
 	fmt.Printf(" * type: %s\n", ctx.GetClientType())
 	fmt.Printf(" * browser: %s\n", ctx.GetBrowser())
 	fmt.Printf(" * browser version: %s\n", ctx.GetBrowserVersion())
-	fmt.Printf(" * browser: %s\n", ctx.GetEngine())
+	fmt.Printf(" * engine: %s\n", ctx.GetEngine())
 	fmt.Printf(" * engine version: %s\n", ctx.GetEngineVersion())
 	fmt.Printf("device:\n")
 	fmt.Printf(" * type: %s\n", ctx.GetDeviceType())
