@@ -134,7 +134,7 @@ func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) 
 		if x.modelSI != -1 {
 			sm := &__dr_dm[x.modelSI]
 			c.deviceBufMNE(sm.model64)
-			typ = c.deviceEvalType(sm.type64, defType)
+			typ = c.deviceEvalType(sm.type64, x.type64, defType)
 		} else if x.models64 != 0 {
 			lo, hi := x.models64.Decode()
 			for i := lo; i < hi; i++ {
@@ -143,7 +143,7 @@ func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) 
 					re := __dr_re[m.matchRI]
 					if re.Match(c.src) {
 						c.deviceBufMNE1(m.model64, re)
-						typ = c.deviceEvalType(m.type64, defType)
+						typ = c.deviceEvalType(m.type64, x.type64, defType)
 						break
 					}
 				} else if m.match64 != 0 {
@@ -151,13 +151,13 @@ func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) 
 					si := __dr_buf[lo1:hi1]
 					if len(si) > 0 && bytes.Index(c.src, si) != -1 {
 						c.deviceBufMNE(m.model64)
-						typ = c.deviceEvalType(m.type64, defType)
+						typ = c.deviceEvalType(m.type64, x.type64, defType)
 						break
 					}
 				}
 			}
 		} else {
-			typ = c.deviceEvalType(x.type64, defType)
+			typ = c.deviceEvalType(x.type64, 0, defType)
 		}
 		ok = true
 	}
@@ -211,9 +211,13 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 	c.modelName64.Encode(lo1, hi1)
 }
 
-func (c *Ctx) deviceEvalType(type64 entry.Entry64, defType DeviceType) DeviceType {
-	lo, hi := type64.Decode()
+func (c *Ctx) deviceEvalType(typ, typ1 entry.Entry64, defType DeviceType) DeviceType {
+	lo, hi := typ.Decode()
 	raw := fastconv.B2S(__dr_buf[lo:hi])
+	if len(raw) == 0 {
+		lo, hi = typ1.Decode()
+	}
+	raw = fastconv.B2S(__dr_buf[lo:hi])
 	if len(raw) == 0 {
 		return defType
 	}
