@@ -18,7 +18,7 @@ func init() {
 }
 
 func main() {
-	ctx := uaxpl.AcquireWithSrcStr(*ua)
+	ctx := uaxpl.NewCtxWithSrcStr(*ua)
 	fmt.Printf("origin ua: %s\n", ctx.GetUserAgent())
 	fmt.Printf("client:\n")
 	fmt.Printf(" * type: %s\n", ctx.GetClientType())
