@@ -1335,7 +1335,7 @@ var (
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:Google-HTTP-Java-Client(?:/(\d+[\.\w-]+))?)`),
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:WWW-Mechanize(?:/(\d+[\.\d]+))?)`),
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:Faraday(?: v(\d+[\.\d]+))?)`),
-		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:(?:Go-http-client|Go )/?(?:(\d+[\.\d]+))?(?: package http)?)`),
+		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:(?:Go-http-client)/?(?:(\d+[\.\d]+))?(?: package http)?)`),
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:urlgrabber(?:/(\d+[\.\d]+))?)`),
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:libdnf(?:/(\d+[\.\d]+))?)`),
 		regexp.MustCompile(`(?i)(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-|MZ-)(?:HTTPie(?:/(\d+[\.\d]+))?)`),

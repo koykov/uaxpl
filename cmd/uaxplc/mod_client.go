@@ -33,6 +33,13 @@ type ClientEngine struct {
 
 type clientModule struct{}
 
+var (
+	// Regexp replaces
+	reReplClient = map[string]string{
+		`(?:Go-http-client|Go )/?(?:(\d+[\.\d]+))?(?: package http)?`: `(?:Go-http-client)/?(?:(\d+[\.\d]+))?(?: package http)?`,
+	}
+)
+
 func (m clientModule) Validate(input, _ string) error {
 	if len(input) == 0 {
 		return fmt.Errorf("param -input is required")
@@ -103,6 +110,9 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 				match64 = buf.add(tuple.Regex)
 			} else {
 				rs = normalizeRegex(rs)
+				if rs1, ok := reReplClient[rs]; ok {
+					rs = rs1
+				}
 				if _, err = regexp.Compile(rs); err == nil {
 					bufRE = append(bufRE, rs)
 					matchRI = int32(len(bufRE) - 1)
