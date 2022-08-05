@@ -199,6 +199,7 @@ func (c *Ctx) GetBrand() string {
 	if c.brandName64 != 0 {
 		lo, hi := c.brandName64.Decode()
 		raw := __dr_buf[lo:hi]
+		raw = bytealg.Trim(raw, bSpace)
 		return fastconv.B2S(raw)
 	}
 	return Unknown
@@ -211,6 +212,7 @@ func (c *Ctx) GetModel() string {
 	if c.modelName64 != 0 {
 		lo, hi := c.modelName64.Decode()
 		raw := c.buf[lo:hi]
+		raw = bytealg.Trim(raw, bSpace)
 		return fastconv.B2S(raw)
 	}
 	return ""
@@ -227,6 +229,7 @@ func (c *Ctx) GetOS() string {
 		}
 		lo, hi := c.osName64.Decode()
 		raw := buf[lo:hi]
+		raw = bytealg.Trim(raw, bSpace)
 		return fastconv.B2S(raw)
 	}
 	return Unknown
@@ -298,3 +301,7 @@ func (c *Ctx) reset() {
 	c.osVersion64.Reset()
 	c.osVersion.Reset()
 }
+
+var (
+	bSpace = []byte(" ")
+)
