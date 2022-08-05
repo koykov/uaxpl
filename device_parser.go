@@ -25,6 +25,7 @@ var (
 		"AmigaOS":     {},
 		"IBM":         {},
 		"GNU/Linux":   {},
+		"Ubuntu":      {},
 		"Mac":         {},
 		"Unix":        {},
 		"Windows":     {},
@@ -133,7 +134,7 @@ func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) 
 
 		if x.modelSI != -1 {
 			sm := &__dr_dm[x.modelSI]
-			c.deviceBufMNE(sm.model64)
+			c.deviceBufMNE1(sm.model64, __dr_re[x.matchRI])
 			typ = c.deviceEvalType(sm.type64, x.type64, defType)
 		} else if x.models64 != 0 {
 			lo, hi := x.models64.Decode()
