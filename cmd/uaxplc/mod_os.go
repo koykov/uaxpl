@@ -29,6 +29,13 @@ type osVersion struct {
 
 type osModule struct{}
 
+var (
+	// Regexp replaces
+	reReplOS = map[string]string{
+		`(?:iPhone ?OS|iOS(?: Version)?)(?:/|; |,)(\d+[\.\d]+)`: `(?:iPhone ?OS|[\s(]iOS(?: Version)?)(?:/|; |,)(\d+[\.\d]+)`,
+	}
+)
+
 func (m osModule) Validate(input, _ string) error {
 	if len(input) == 0 {
 		return fmt.Errorf("param -input is required")
@@ -85,6 +92,9 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 			match64 = buf.add(tuple.Regex)
 		} else {
 			rs = normalizeRegex(rs)
+			if rs1, ok := reReplOS[rs]; ok {
+				rs = rs1
+			}
 			if _, err = regexp.Compile(rs); err == nil {
 				bufRE = append(bufRE, rs)
 				matchRI = int32(len(bufRE) - 1)
@@ -107,6 +117,9 @@ func (m osModule) Compile(w moduleWriter, input, target string) (err error) {
 					match641 = buf.add(tv.Regex)
 				} else {
 					rs1 := normalizeRegex(tv.Regex)
+					if rs1, ok := reReplOS[rs]; ok {
+						rs = rs1
+					}
 					if _, err = regexp.Compile(rs1); err == nil {
 						bufRE = append(bufRE, rs1)
 						matchRI1 = int32(len(bufRE) - 1)
