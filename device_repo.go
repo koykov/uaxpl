@@ -20121,7 +20121,7 @@ var (
 		regexp.MustCompile(`(?i)SWTV[;,]`),
 		regexp.MustCompile(`(?i)Saba[;,]`),
 		regexp.MustCompile(`(?i)Salora[;,]`),
-		regexp.MustCompile(`(?i)Smart\s*TV|Maple_2011`),
+		regexp.MustCompile(`(?i)Samsung.*Smart\s*TV|Maple_2011`),
 		regexp.MustCompile(`(?i)SmartTV(201[2-9]|202[0-1]):([^);/]+)`),
 		regexp.MustCompile(`(?i)SmartTV(201[2-9]|202[0-1])`),
 		regexp.MustCompile(`(?i)Selevision; (?:Selevision )?([^);/]+)`),

@@ -13,7 +13,7 @@ var ua = flag.String("ua", "", "UserAgent string")
 func init() {
 	flag.Parse()
 	if len(*ua) == 0 {
-		log.Fatalln("Param -ua is mandatory")
+		log.Fatalln("param -ua is mandatory")
 	}
 }
 
