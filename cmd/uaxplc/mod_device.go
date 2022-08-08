@@ -38,7 +38,8 @@ type deviceModule struct{}
 var (
 	// Regexp replaces
 	staticReplDevice = map[string]string{
-		`TCL`: `TCL[^\s]`,
+		`TCL`:   `TCL[^\s]`,
+		`Loewe`: `Loewe[^$]`,
 	}
 	reReplDevice = map[string]string{
 		`MOT|DROID ?(?:Build|[a-z0-9]+)|portalmmm/2.0 (?:E378i|L6|L7|v3)|XOOM [^;/]*Build|XT1941-2|XT1924-9|XT1925-10|XT1965-6|XT1970-5|XT1799-2|XT1021|XT2171-3|XT2071-4|XT2175-2|XT2125-4|XT2143-1|XT2153-1|XT2201-2|XT2137-2|XT1710-08|XT180[3-5]|XT194[23]-1|XT1929-15|(?:XT|MZ|MB|ME)[0-9]{3,4}[a-z]?(?:\(Defy\)|-0[1-5])?(?:[;]? Build|\))`: `MOT[^T][^O]|[^A][^N]DROID ?(?:Build|[a-z0-9]+)|portalmmm\/2.0 (?:E378i|L6|L7|v3)|XOOM [^;\/]*Build|XT1941-2|XT1924-9|XT1925-10|XT1965-6|XT1970-5|XT1799-2|XT1021|XT2171-3|XT2071-4|XT2175-2|XT2125-4|XT2143-1|XT2153-1|XT2201-2|XT2137-2|XT1710-08|XT180[3-5]|XT194[23]-1|XT1929-15|(?:XT|MZ|MB|ME)[0-9]{3,4}[a-z]?(?:\(Defy\)|-0[1-5])?(?:[;]? Build|\))`,
