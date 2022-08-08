@@ -33,6 +33,9 @@ var (
 		"Chrome OS":   {},
 		"Chromium OS": {},
 	}
+
+	reForceTablet = regexp.MustCompile(`(?i)Tablet`)
+	reForceMobile = regexp.MustCompile(`(?i)Mobile`)
 )
 
 func (c *Ctx) parseDevice() bool {
@@ -92,6 +95,17 @@ func (c *Ctx) parseDevice() bool {
 			return true
 		}
 	}
+
+	if reForceTablet.Match(c.src) {
+		c.deviceType = DeviceTypeTablet
+		return true
+	}
+
+	if reForceMobile.Match(c.src) {
+		c.deviceType = DeviceTypeMobile
+		return true
+	}
+
 	return false
 }
 
