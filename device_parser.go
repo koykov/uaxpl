@@ -245,6 +245,10 @@ func (c *Ctx) deviceEvalType(typ, typ1 entry.Entry64, defType DeviceType) Device
 		return DeviceTypeTablet
 	case "tv":
 		return DeviceTypeTV
+	case "console":
+		return DeviceTypeConsole
+	case "portable media player":
+		return DeviceTypePortableMediaPlayer
 	default:
 		return defType
 	}
