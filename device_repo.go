@@ -12128,7 +12128,7 @@ var (
 		regexp.MustCompile(`(?i)aosonS7(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)aosonS8Pro(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)aoson(M707TG)(?:[);/ ]|$)`),
-		regexp.MustCompile(`(?i)(?:iTunes-)?Apple[ _]?TV|Apple/|(?:Apple-|iTunes-)?(?:iPad|iPhone)|iPh(?:[0-9]|1[0-4]),[0-9]|CFNetwork|HomePod|AirPlay|Watch ?OS|Watch1,[12]|MDCR_Mac|ICRU_iP(?:ad|hone)|Mac OS X[,;]|macOS,`),
+		regexp.MustCompile(`(?i)(?:iTunes-)?Apple[ _]?TV|Apple\/|(?:Apple-|iTunes-)?[^l][^i][^k][^e][^\s](?:iPad|iPhone)|iPh(?:[0-9]|1[0-4]),[0-9]|CFNetwork|HomePod|AirPlay|Watch ?OS|Watch1,[12]|MDCR_Mac|ICRU_iP(?:ad|hone)|Mac OS X[,;]|macOS,`),
 		regexp.MustCompile(`(?i)Watch3,[13]`),
 		regexp.MustCompile(`(?i)Watch3,[24]`),
 		regexp.MustCompile(`(?i)Watch5,(?:9|11)`),
