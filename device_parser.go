@@ -26,12 +26,16 @@ var (
 		"IBM":         {},
 		"GNU/Linux":   {},
 		"Ubuntu":      {},
+		"Fedora":      {},
 		"Mac":         {},
 		"Unix":        {},
+		"OpenBSD":     {},
+		"FreeBSD":     {},
 		"Windows":     {},
 		"BeOS":        {},
 		"Chrome OS":   {},
 		"Chromium OS": {},
+		"OS ROSA":     {},
 	}
 
 	reForceTablet = regexp.MustCompile(`(?i)Tablet`)
