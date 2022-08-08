@@ -15261,7 +15261,7 @@ var (
 		regexp.MustCompile(`(?i)LOGIC[_ ](X50|X[13]|X4M|L5D|X5[AFT]|X60G|L6[01])(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)(L50T?|L57|L55[ABS])(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)Fieldbook F1(?:[);/ ]|$)`),
-		regexp.MustCompile(`(?i)LOGICOM[_ ]|(TAB950|TAB1062|E731|E812|E912|E1031|POWER BOT|La[ _]Tab[ _](?:7[24]|10[57]|11[345])|(?:B|C|M|ID|VR)[ _]?BOT[ _]?(?:TAB[ _])?([0-9]+\+?)(?:PLUS)?|KT712A_4\.4|L-?IXIR[0-9]*|L-ITE|L-EGANTONE(?:-R)?|Le Fizz|L-?EMENT.+|Le[ _]?(?:Up|Connect|Hop|Hello|Lift|Hola|Moov[2]?|Must(?: 2)?|Starter L|Fit FR|Spark|Prime|Smooth(?: FR)?)|LeFit)(?:[);/ ]|$|_)`),
+		regexp.MustCompile(`(?i)LOGICOM[_ ]|(TAB950|TAB1062|E731|E812|E912|E1031|POWER BOT|La[ _]Tab[ _](?:7[24]|10[57]|11[345])|(?:B|C|M|ID|VR)[ _]?BOT[ _]?(?:TAB[ _])?([0-9]+\+?)(?:PLUS)?|KT712A_4\.4|L-?IXIR[0-9]*|L-ITE|L-EGANTONE(?:-R)?|Le Fizz|L-?EMENT[^s].+|Le[ _]?(?:Up|Connect|Hop|Hello|Lift|Hola|Moov[2]?|Must(?: 2)?|Starter L|Fit FR|Spark|Prime|Smooth(?: FR)?)|LeFit)(?:[);/ ]|$|_)`),
 		regexp.MustCompile(`(?i)La[ _]Tab[ _](7[24]|10[57]|11[345]|105_P)(?:[);/ ]|$)`),
 		regexp.MustCompile(`(?i)KT712A_4.4|L-IXIR TAB 701 3G`),
 		regexp.MustCompile(`(?i)L-?IXIR[ _]TAB[ _]([^);/]+)( Build|[);])`),
