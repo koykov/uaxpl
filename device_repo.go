@@ -20136,7 +20136,7 @@ var (
 		regexp.MustCompile(`(?i)Smart; ([^);/]+)`),
 		regexp.MustCompile(`(?i)([A-Z]{2}[0-9]{2}|ZAPPIX)`),
 		regexp.MustCompile(`(?i)KDL-GN([56])`),
-		regexp.MustCompile(`(?i)BRAVIA (VH1|4K VH2)`),
+		regexp.MustCompile(`(?i)(?:BRAVIA )(2K GB ATV3|[48]K UR[123]|4K GB ATV3|4K GB|4K VH2|4K 2015|2015|VH1|VU1)(?:[);/ ]|VH1|4K VH2|$)`),
 		regexp.MustCompile(`(?i)(KDL?-?[0-9]{2}[A-Z]{1}[0-9]{4}[A-Z]{1})`),
 		regexp.MustCompile(`(?i)(KDL?-?[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1})`),
 		regexp.MustCompile(`(?i)(KDL?-?[0-9]{2}[A-Z]{1,2}[0-9]{1,5})`),
