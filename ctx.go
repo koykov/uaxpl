@@ -23,6 +23,8 @@ const (
 
 	flagDeviceForceDesktop
 	flagEngineForceBlink
+
+	flagVendorFragment
 )
 
 type Ctx struct {
@@ -197,8 +199,12 @@ func (c *Ctx) GetBrand() string {
 		c.parseDevice()
 	}
 	if c.brandName64 != 0 {
+		buf := __dr_buf
+		if c.CheckBit(flagVendorFragment) {
+			buf = __vr_buf
+		}
 		lo, hi := c.brandName64.Decode()
-		raw := __dr_buf[lo:hi]
+		raw := buf[lo:hi]
 		raw = bytealg.Trim(raw, bSpace)
 		return fastconv.B2S(raw)
 	}

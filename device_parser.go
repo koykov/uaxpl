@@ -110,6 +110,10 @@ func (c *Ctx) parseDevice() bool {
 		return true
 	}
 
+	if c.brandName64 == 0 {
+		c.evalVendor()
+	}
+
 	return false
 }
 
@@ -262,5 +266,19 @@ func (c *Ctx) deviceEvalType(typ, typ1 entry.Entry64, defType DeviceType) Device
 		return DeviceTypePortableMediaPlayer
 	default:
 		return defType
+	}
+}
+
+func (c *Ctx) evalVendor() {
+	for i := 0; i < len(__vr_idx); i++ {
+		brand := __vr_idx[i]
+		lo, hi := brand.range64.Decode()
+		for j := lo; j < hi; j++ {
+			re := __vr_re[j]
+			if re.Match(c.src) {
+				c.brandName64 = brand.brand64
+				c.SetBit(flagVendorFragment, true)
+			}
+		}
 	}
 }

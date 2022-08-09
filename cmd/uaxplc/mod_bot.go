@@ -12,5 +12,6 @@ func (m botModule) Validate(input, _ string) error {
 }
 
 func (m botModule) Compile(w moduleWriter, input, target string) (err error) {
+	_, _, _ = w, input, target
 	return
 }
