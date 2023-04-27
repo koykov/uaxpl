@@ -118,9 +118,33 @@ func (c *Ctx) parseDevice() bool {
 }
 
 func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) {
+	// Check cached result.
+	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagDeviceDetect) {
+		c.Bitset = row.Bitset
+		c.deviceType = row.deviceType
+		c.brandName64 = row.brandName64
+		c.modelName64 = row.modelName64
+		c.buf = append(c.buf[:0], row.buf...)
+
+		typ, ok = c.deviceType, true
+		return
+	}
+
 	typ = defType
 
 	defer func() {
+		if ok {
+			// Put result to the cache.
+			row := cacheRow{
+				Bitset:      c.Bitset,
+				deviceType:  c.deviceType,
+				brandName64: c.brandName64,
+				modelName64: c.modelName64,
+				buf:         c.buf,
+			}
+			cache_.set(c.GetUserAgent(), row)
+		}
+
 		if ok || idx != dpNotebook {
 			return
 		}

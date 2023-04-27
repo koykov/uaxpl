@@ -61,6 +61,18 @@ func (c *Ctx) parseClient() bool {
 }
 
 func (c *Ctx) evalClient(idx int) bool {
+	// Check cached result.
+	if row, ok := cache_.get(c.GetUserAgent()); ok && row.CheckBit(flagClientDetect) {
+		c.Bitset = row.Bitset
+		c.clientType = row.clientType
+		c.clientName64 = row.clientName64
+		c.clientVersion64 = row.clientVersion64
+		c.engineName64 = row.engineName64
+		c.engineVersion64 = row.engineVersion64
+		c.buf = append(c.buf[:0], row.buf...)
+		return true
+	}
+
 	ir := __cr_idx[idx]
 	irl := len(ir)
 	_ = ir[irl-1]
@@ -102,6 +114,19 @@ func (c *Ctx) evalClient(idx int) bool {
 		if idx == cpBrowser {
 			c.evalEngine(x)
 		}
+
+		// Put result to the cache.
+		row := cacheRow{
+			Bitset:          c.Bitset,
+			clientType:      c.clientType,
+			clientName64:    c.clientName64,
+			clientVersion64: c.clientVersion64,
+			engineName64:    c.engineName64,
+			engineVersion64: c.engineVersion64,
+			buf:             c.buf,
+		}
+		cache_.set(c.GetUserAgent(), row)
+
 		return true
 	}
 	return false
