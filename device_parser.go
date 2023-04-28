@@ -42,72 +42,91 @@ var (
 	reForceMobile = regexp.MustCompile(`(?i)Mobile`)
 )
 
-func (c *Ctx) parseDevice() bool {
+func (c *Ctx) parseDevice() (ok bool) {
+	// Check cached result.
+	row, ok1 := cache_.get(c.GetUserAgent())
+	if ok1 && row.CheckBit(flagDeviceDetect) {
+		c.fromCache(row)
+		ok = true
+		return
+	}
+	defer func() {
+		c.SetBit(flagDeviceDetect, true)
+		if ok {
+			// Put result to the cache.
+			var row cacheRow
+			row.fromCtx(c)
+			cache_.set(c.GetUserAgent(), row)
+		}
+	}()
+
 	if c.maskDeviceType&DeviceTypeCamera != 0 {
-		if typ, ok := c.evalDevice(dpCamera, DeviceTypeCamera); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpCamera, DeviceTypeCamera); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeCarBrowser != 0 {
-		if typ, ok := c.evalDevice(dpCarBrowser, DeviceTypeCarBrowser); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpCarBrowser, DeviceTypeCarBrowser); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeConsole != 0 {
-		if typ, ok := c.evalDevice(dpConsole, DeviceTypeConsole); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpConsole, DeviceTypeConsole); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypePortableMediaPlayer != 0 {
-		if typ, ok := c.evalDevice(dpPortableMediaPlayer, DeviceTypeNotebook); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpPortableMediaPlayer, DeviceTypeNotebook); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeShellTV != 0 {
-		if typ, ok := c.evalDevice(dpShellTV, DeviceTypeShellTV); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpShellTV, DeviceTypeShellTV); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeTV != 0 {
-		if typ, ok := c.evalDevice(dpTV, DeviceTypeTV); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpTV, DeviceTypeTV); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeMobile != 0 {
-		if typ, ok := c.evalDevice(dpMobile, DeviceTypeMobile); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpMobile, DeviceTypeMobile); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskDeviceType&DeviceTypeNotebook != 0 {
-		if typ, ok := c.evalDevice(dpNotebook, DeviceTypeNotebook); ok {
-			c.SetBit(flagDeviceDetect, true)
+		if typ, ok1 := c.evalDevice(dpNotebook, DeviceTypeNotebook); ok1 {
 			c.deviceType = typ
-			return true
+			ok = true
+			return
 		}
 	}
 
 	if reForceTablet.Match(c.src) {
 		c.deviceType = DeviceTypeTablet
-		return true
+		ok = true
+		return
 	}
 
 	if reForceMobile.Match(c.src) {
 		c.deviceType = DeviceTypeMobile
-		return true
+		ok = true
+		return
 	}
 
 	if c.brandName64 == 0 {
@@ -118,33 +137,9 @@ func (c *Ctx) parseDevice() bool {
 }
 
 func (c *Ctx) evalDevice(idx int, defType DeviceType) (typ DeviceType, ok bool) {
-	// Check cached result.
-	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagDeviceDetect) {
-		c.Bitset = row.Bitset
-		c.deviceType = row.deviceType
-		c.brandName64 = row.brandName64
-		c.modelName64 = row.modelName64
-		c.buf = append(c.buf[:0], row.buf...)
-
-		typ, ok = c.deviceType, true
-		return
-	}
-
 	typ = defType
 
 	defer func() {
-		if ok {
-			// Put result to the cache.
-			row := cacheRow{
-				Bitset:      c.Bitset,
-				deviceType:  c.deviceType,
-				brandName64: c.brandName64,
-				modelName64: c.modelName64,
-				buf:         c.buf,
-			}
-			cache_.set(c.GetUserAgent(), row)
-		}
-
 		if ok || idx != dpNotebook {
 			return
 		}

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/koykov/bitset"
+	"github.com/koykov/bytealg"
 	"github.com/koykov/entry"
 	"github.com/koykov/hash/fnv"
 )
@@ -66,6 +67,10 @@ func (c *cache) set(key string, row cacheRow) {
 
 	c.mux.Lock()
 	defer c.mux.Unlock()
+	if idx, ok := c.idx[row.hkey]; ok {
+		c.buf[idx] = row
+		return
+	}
 	c.buf = append(c.buf, row)
 	c.idx[row.hkey] = len(c.buf) - 1
 }
@@ -87,10 +92,26 @@ func (c *cache) clean() {
 	now := time.Now().UnixNano()
 	c.o.Do(c.init)
 	c.mux.Lock()
+	defer c.mux.Unlock()
 	for i := 0; i < len(c.buf); i++ {
 		if now-c.buf[i].timestamp > cacheTTL {
 			c.buf[i] = c.buf[len(c.buf)-1]
 			c.buf = c.buf[:len(c.buf)-1]
 		}
 	}
+}
+
+func (r *cacheRow) fromCtx(ctx *Ctx) {
+	r.Bitset = ctx.Bitset
+	r.clientType = ctx.clientType
+	r.clientName64 = ctx.clientName64
+	r.clientVersion64 = ctx.clientVersion64
+	r.engineName64 = ctx.engineName64
+	r.engineVersion64 = ctx.engineVersion64
+	r.deviceType = ctx.deviceType
+	r.brandName64 = ctx.brandName64
+	r.modelName64 = ctx.modelName64
+	r.osName64 = ctx.osName64
+	r.osVersion64 = ctx.osVersion64
+	r.buf = bytealg.Copy(ctx.buf)
 }

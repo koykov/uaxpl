@@ -14,65 +14,69 @@ const (
 	cpPIM           = 6
 )
 
-func (c *Ctx) parseClient() bool {
+func (c *Ctx) parseClient() (ok bool) {
+	// Check cached result.
+	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagClientDetect) {
+		c.fromCache(row)
+		ok = true
+		return
+	}
+	defer func() {
+		c.SetBit(flagClientDetect, true)
+		if ok {
+			// Put result to the cache.
+			var row cacheRow
+			row.fromCtx(c)
+			cache_.set(c.GetUserAgent(), row)
+		}
+	}()
+
 	if c.maskClientType&ClientTypeFeedReader != 0 {
 		if c.evalClient(cpFeedReader) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeFeedReader
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskClientType&ClientTypeMobileApp != 0 {
 		if c.evalClient(cpMobileApp) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeMobileApp
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskClientType&ClientTypeMediaPlayer != 0 {
 		if c.evalClient(cpMediaPlayer) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeMediaPlayer
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskClientType&ClientTypePIM != 0 {
 		if c.evalClient(cpPIM) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypePIM
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskClientType&ClientTypeLibrary != 0 {
 		if c.evalClient(cpLibrary) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeLibrary
-			return true
+			ok = true
+			return
 		}
 	}
 	if c.maskClientType&ClientTypeBrowser != 0 {
 		if c.evalClient(cpBrowser) {
-			c.SetBit(flagClientDetect, true)
 			c.clientType = ClientTypeBrowser
-			return true
+			ok = true
+			return
 		}
 	}
-	return false
+	return
 }
 
 func (c *Ctx) evalClient(idx int) bool {
-	// Check cached result.
-	if row, ok := cache_.get(c.GetUserAgent()); ok && row.CheckBit(flagClientDetect) {
-		c.Bitset = row.Bitset
-		c.clientType = row.clientType
-		c.clientName64 = row.clientName64
-		c.clientVersion64 = row.clientVersion64
-		c.engineName64 = row.engineName64
-		c.engineVersion64 = row.engineVersion64
-		c.buf = append(c.buf[:0], row.buf...)
-		return true
-	}
-
 	ir := __cr_idx[idx]
 	irl := len(ir)
 	_ = ir[irl-1]
@@ -114,18 +118,6 @@ func (c *Ctx) evalClient(idx int) bool {
 		if idx == cpBrowser {
 			c.evalEngine(x)
 		}
-
-		// Put result to the cache.
-		row := cacheRow{
-			Bitset:          c.Bitset,
-			clientType:      c.clientType,
-			clientName64:    c.clientName64,
-			clientVersion64: c.clientVersion64,
-			engineName64:    c.engineName64,
-			engineVersion64: c.engineVersion64,
-			buf:             c.buf,
-		}
-		cache_.set(c.GetUserAgent(), row)
 
 		return true
 	}
