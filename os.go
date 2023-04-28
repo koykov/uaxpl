@@ -43,6 +43,12 @@ var (
 )
 
 func (c *Ctx) parseOS() bool {
+	// Check cached result.
+	if row, ok := cache_.get(c.GetUserAgent()); ok && row.CheckBit(flagOSDetect) {
+		c.fromCache(row)
+		return true
+	}
+
 	r := __or_os
 	rl := len(r)
 	_ = r[rl-1]
@@ -101,6 +107,12 @@ func (c *Ctx) parseOS() bool {
 		}
 
 		c.SetBit(flagOSDetect, true)
+
+		// Put result to the cache.
+		var row cacheRow
+		row.fromCtx(c)
+		cache_.set(c.GetUserAgent(), row)
+
 		return true
 	}
 
