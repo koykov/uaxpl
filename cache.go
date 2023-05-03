@@ -97,6 +97,7 @@ func (c *cache) clean() {
 		if now-c.buf[i].timestamp > cacheTTL {
 			c.buf[i] = c.buf[len(c.buf)-1]
 			c.buf = c.buf[:len(c.buf)-1]
+			c.idx[c.buf[i].hkey] = i
 		}
 	}
 }
