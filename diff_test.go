@@ -28,7 +28,7 @@ func (d diff) len() int {
 }
 
 func (d *diff) add(key, l, r string) {
-	d.buf = append(d.buf, diffStage{key: key, l: bytealg.Copy(l), r: bytealg.Copy(r)})
+	d.buf = append(d.buf, diffStage{key: key, l: bytealg.CopyStr(l), r: bytealg.CopyStr(r)})
 }
 
 func (d diff) write(w io.Writer) {

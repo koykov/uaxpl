@@ -240,7 +240,7 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 			r := c.src[m[i*2]:m[i*2+1]]
 			c.buf = append(c.buf, r...)
 			pp := p + 1
-			p = bytealg.IndexByteAtLUR(raw, '$', pp)
+			p = bytealg.IndexByteAtLR(raw, '$', pp)
 			if p-(pp+1) > 0 {
 				c.buf = append(c.buf, raw[pp+1:p]...)
 			}
