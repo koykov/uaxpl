@@ -95,9 +95,11 @@ func (c *cache) clean() {
 	defer c.mux.Unlock()
 	for i := 0; i < len(c.buf); i++ {
 		if now-c.buf[i].timestamp > cacheTTL {
+			old := c.buf[i].hkey
 			c.buf[i] = c.buf[len(c.buf)-1]
 			c.buf = c.buf[:len(c.buf)-1]
 			c.idx[c.buf[i].hkey] = i
+			delete(c.idx, old)
 		}
 	}
 }
