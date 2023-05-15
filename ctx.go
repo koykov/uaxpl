@@ -143,7 +143,7 @@ func (c *Ctx) GetBrowserVersionString() string {
 		}
 		lo, hi := c.clientVersion64.Decode()
 		raw := buf[lo:hi]
-		if p := bytealg.IndexByteAtLR(raw, '/', 0); p != -1 {
+		if p := bytealg.IndexByteAtLUR(raw, '/', 0); p != -1 {
 			raw = raw[p+1:]
 		}
 		return fastconv.B2S(bytealg.TrimRight(raw, bDot))
