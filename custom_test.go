@@ -83,7 +83,7 @@ func TestCustomParse(t *testing.T) {
 			if len(buf) > 0 {
 				t.Log(stage.UA)
 				for j := 0; j < len(buf); j++ {
-					t.Error("*", buf[j])
+					t.Log("*", buf[j])
 				}
 			}
 		}

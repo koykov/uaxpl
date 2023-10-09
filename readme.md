@@ -1,4 +1,4 @@
-# UserAgent parser.
+# UserAgent eXPLain library.
 
 Go port of [device-detector](https://github.com/matomo-org/device-detector) library.
 Designed to use in high-load.
@@ -26,3 +26,26 @@ fmt.Println("OS:", ctx.GetOS())                                // Android
 fmt.Println("OS version:", ctx.GetOSVersionString())           // 9
 fmt.Println("OS version full:", ctx.GetOSVersion())            // 9.0.0.0
 ```
+
+### CLI Installation
+
+`uaxpl` has two cli commands: [uaxpl](cmd/uaxpl) and [uaxplc](cmd/uaxplc). First on is a simple cli tool to parse UA in
+terminals.
+
+`uaxplc` uses to recompile internal repositories from [device-detector](https://github.com/matomo-org/device-detector)'s
+[YAML](https://github.com/matomo-org/device-detector/tree/master/regexes) files.
+
+To install the tool run
+```bash
+go install github.com/koykov/uaxpl/cmd/uaxplc
+```
+As result, you must have binary `$GOPATH/bin/uaxplc`.
+
+Then recompile the repos
+```bash
+go get github.com/koykov/uaxpl
+cd $GOPATH/src/github.com/koykov/uaxpl
+go generate
+```
+
+Run tests to make sure repos were compiled successfully.
