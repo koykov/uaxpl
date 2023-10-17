@@ -10,8 +10,4 @@ require (
 	github.com/koykov/hash v1.0.0
 )
 
-require (
-	github.com/koykov/byteseq v0.0.0-20230330194259-68973f3b765a // indirect
-	github.com/koykov/uaxpl/cmd/uaxplc v0.0.0-20231009153124-9135db096d2f // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
-)
+require github.com/koykov/byteseq v0.0.0-20230330194259-68973f3b765a // indirect
