@@ -125,4 +125,7 @@ func TestCustomParse(t *testing.T) {
 			_ = ctx.GetDeviceType()
 		}
 	})
+	t.Run("ds2", func(t *testing.T) {
+		_ = testDS("testdata/custom/ds2.json")
+	})
 }

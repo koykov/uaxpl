@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"go/format"
-	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
@@ -38,7 +37,7 @@ func (m vendorModule) Compile(w moduleWriter, input, target string) (err error) 
 	input = strings.ReplaceAll(input, "~", hd)
 
 	var body []byte
-	if body, err = ioutil.ReadFile(input); err != nil {
+	if body, err = os.ReadFile(input); err != nil {
 		return
 	}
 	if len(body) == 0 {
@@ -122,7 +121,7 @@ func (m vendorModule) Compile(w moduleWriter, input, target string) (err error) 
 		return
 	}
 
-	err = ioutil.WriteFile(target, fmtSource, 0644)
+	err = os.WriteFile(target, fmtSource, 0644)
 
 	return
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"go/format"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -78,7 +77,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 		bufCR = bufCR[:0]
 
 		var body []byte
-		if body, err = ioutil.ReadFile(files[i]); err != nil {
+		if body, err = os.ReadFile(files[i]); err != nil {
 			return
 		}
 		if len(body) == 0 {
@@ -234,7 +233,7 @@ func (m clientModule) Compile(w moduleWriter, input, target string) (err error) 
 		return
 	}
 
-	err = ioutil.WriteFile(target, fmtSource, 0644)
+	err = os.WriteFile(target, fmtSource, 0644)
 
 	return
 }
