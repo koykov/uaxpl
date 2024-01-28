@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"regexp"
 
-	"github.com/koykov/fastconv"
+	"github.com/koykov/byteconv"
 )
 
 var (
@@ -18,7 +18,7 @@ func (c *Ctx) evalEngine(cri *clientTuple) {
 	if cri.engineFI != -1 {
 		lo, hi := c.clientVersion64.Decode()
 		raw := c.src[lo:hi]
-		c.engineName64 = __cr_ef[cri.engineFI](getMajor(fastconv.B2S(raw)))
+		c.engineName64 = __cr_ef[cri.engineFI](getMajor(byteconv.B2S(raw)))
 	}
 	if c.engineName64 == 0 {
 		ir := __cr_idx[cpBrowserEngine]

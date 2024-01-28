@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/koykov/fastconv"
+	"github.com/koykov/byteconv"
 )
 
 type Version struct {
@@ -93,7 +93,7 @@ func (v Version) Write(dst []byte) []byte {
 }
 
 func (v Version) String() string {
-	return fastconv.B2S(v.Write(nil))
+	return byteconv.B2S(v.Write(nil))
 }
 
 func (v *Version) Reset() {

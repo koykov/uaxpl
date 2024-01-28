@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/koykov/fastconv"
+	"github.com/koykov/byteconv"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 )
 
 func isRegex(s string) (b bool) {
-	p := fastconv.S2B(s)
+	p := byteconv.S2B(s)
 	for i := 0; i < len(regexBytes); i++ {
 		if bytes.IndexByte(p, regexBytes[i]) != -1 {
 			b = true

@@ -5,8 +5,8 @@ import (
 	"regexp"
 
 	"github.com/koykov/bytealg"
+	"github.com/koykov/byteconv"
 	"github.com/koykov/entry"
-	"github.com/koykov/fastconv"
 )
 
 const (
@@ -262,11 +262,11 @@ func (c *Ctx) deviceBufMNE1(e entry.Entry64, re *regexp.Regexp) {
 
 func (c *Ctx) deviceEvalType(typ, typ1 entry.Entry64, defType DeviceType) DeviceType {
 	lo, hi := typ.Decode()
-	raw := fastconv.B2S(__dr_buf[lo:hi])
+	raw := byteconv.B2S(__dr_buf[lo:hi])
 	if len(raw) == 0 {
 		lo, hi = typ1.Decode()
 	}
-	raw = fastconv.B2S(__dr_buf[lo:hi])
+	raw = byteconv.B2S(__dr_buf[lo:hi])
 	if len(raw) == 0 {
 		return defType
 	}
