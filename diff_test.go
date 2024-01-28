@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/koykov/bytealg"
-	"github.com/koykov/fastconv"
+	"github.com/koykov/byteconv"
 )
 
 type diff struct {
@@ -32,7 +32,7 @@ func (d *diff) add(key, l, r string) {
 }
 
 func (d diff) write(w io.Writer) {
-	_, _ = w.Write(fastconv.S2B(d.ua))
+	_, _ = w.Write(byteconv.S2B(d.ua))
 	_, _ = w.Write([]byte("\n"))
 	for i := 0; i < len(d.buf); i++ {
 		st := &d.buf[i]

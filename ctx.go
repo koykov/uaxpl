@@ -5,8 +5,8 @@ import (
 
 	"github.com/koykov/bitset"
 	"github.com/koykov/bytealg"
+	"github.com/koykov/byteconv"
 	"github.com/koykov/entry"
-	"github.com/koykov/fastconv"
 	"github.com/koykov/hash/fnv"
 )
 
@@ -76,7 +76,7 @@ func (c *Ctx) SetRequestedWith(header string) *Ctx {
 }
 
 func (c *Ctx) SetUserAgentStr(src string) *Ctx {
-	return c.SetUserAgent(fastconv.S2B(src))
+	return c.SetUserAgent(byteconv.S2B(src))
 }
 
 func (c *Ctx) FilterClientType(mask ClientType) *Ctx {
@@ -90,7 +90,7 @@ func (c *Ctx) FilterDeviceType(mask DeviceType) *Ctx {
 }
 
 func (c *Ctx) GetUserAgent() string {
-	return fastconv.B2S(c.src)
+	return byteconv.B2S(c.src)
 }
 
 func (c *Ctx) GetClientType() ClientType {
@@ -119,7 +119,7 @@ func (c *Ctx) GetBrowser() string {
 	}
 	if e > 0 {
 		lo, hi := e.Decode()
-		return fastconv.B2S(buf[lo:hi])
+		return byteconv.B2S(buf[lo:hi])
 	}
 	return Unknown
 }
@@ -146,7 +146,7 @@ func (c *Ctx) GetBrowserVersionString() string {
 		if p := bytealg.IndexByteAtLUR(raw, '/', 0); p != -1 {
 			raw = raw[p+1:]
 		}
-		return fastconv.B2S(bytealg.TrimRight(raw, bDot))
+		return byteconv.B2S(bytealg.TrimRight(raw, bDot))
 	}
 	return ""
 }
@@ -160,7 +160,7 @@ func (c *Ctx) GetEngine() string {
 	}
 	if c.engineName64 > 0 {
 		lo, hi := c.engineName64.Decode()
-		return fastconv.B2S(__cr_buf[lo:hi])
+		return byteconv.B2S(__cr_buf[lo:hi])
 	}
 	return ""
 }
@@ -179,7 +179,7 @@ func (c *Ctx) GetEngineVersionString() string {
 	}
 	if c.engineVersion64 > 0 {
 		lo, hi := c.engineVersion64.Decode()
-		return fastconv.B2S(c.src[lo:hi])
+		return byteconv.B2S(c.src[lo:hi])
 	}
 	return ""
 }
@@ -206,7 +206,7 @@ func (c *Ctx) GetBrand() string {
 		lo, hi := c.brandName64.Decode()
 		raw := buf[lo:hi]
 		raw = bytealg.Trim(raw, bSpace)
-		return fastconv.B2S(raw)
+		return byteconv.B2S(raw)
 	}
 	return Unknown
 }
@@ -219,7 +219,7 @@ func (c *Ctx) GetModel() string {
 		lo, hi := c.modelName64.Decode()
 		raw := c.buf[lo:hi]
 		raw = bytealg.Trim(raw, bSpace)
-		return fastconv.B2S(raw)
+		return byteconv.B2S(raw)
 	}
 	return ""
 }
@@ -236,7 +236,7 @@ func (c *Ctx) GetOS() string {
 		lo, hi := c.osName64.Decode()
 		raw := buf[lo:hi]
 		raw = bytealg.Trim(raw, bSpace)
-		return fastconv.B2S(raw)
+		return byteconv.B2S(raw)
 	}
 	return Unknown
 }
@@ -272,7 +272,7 @@ func (c *Ctx) GetOSVersionString() string {
 			}
 			raw = c.buf[off:]
 		}
-		return fastconv.B2S(raw)
+		return byteconv.B2S(raw)
 	}
 	return ""
 }
