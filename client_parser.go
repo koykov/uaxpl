@@ -16,8 +16,9 @@ const (
 
 func (c *Ctx) parseClient() (ok bool) {
 	// Check cached result.
-	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagClientDetect) {
-		c.fromCache(row)
+	if raw, ok1 := cache_.Get(c.GetUserAgent()); ok1 && raw.CheckBit(flagClientDetect) {
+		row := any(raw).(cacheEntry)
+		c.fromCache(&row)
 		ok = true
 		return
 	}
@@ -25,9 +26,9 @@ func (c *Ctx) parseClient() (ok bool) {
 		c.SetBit(flagClientDetect, true)
 		if ok {
 			// Put result to the cache.
-			var row cacheRow
+			var row cacheEntry
 			row.fromCtx(c)
-			cache_.set(c.GetUserAgent(), row)
+			_ = cache_.Set(c.GetUserAgent(), row)
 		}
 	}()
 
