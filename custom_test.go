@@ -128,4 +128,9 @@ func TestCustomParse(t *testing.T) {
 	t.Run("ds2", func(t *testing.T) {
 		_ = testDS("testdata/custom/ds2.json")
 	})
+
+	// new brands/models
+	t.Run("ds3", func(t *testing.T) {
+		_ = testDS("testdata/custom/ds3.json")
+	})
 }
