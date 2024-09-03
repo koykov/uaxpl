@@ -1,0 +1,90 @@
+[
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240705.005; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/127.0.6533.105 Mobile Safari/537.36 TwitterAndroid",
+    "device": {
+      "type": "smartphone",
+      "brand": "Google",
+      "model": "Pixel 8"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; WP28) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Oukitel",
+      "model": "WP28"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; GDI-W09) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "tablet",
+      "brand": "Huawei",
+      "model": "Honor MagicPad 13 WiFi"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 7.0; JuliaQN-L21B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Huawei",
+      "model": "Nova 9 SE"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 11; S19 Max Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Reeder",
+      "model": "S19 Max Pro"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; AC2001) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "OnePlus",
+      "model": "Nord 5G"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; WIKO T10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Wiko",
+      "model": "T10"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 7.1.1; A2023P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "ZTE",
+      "model": "Axon 40 Ultra"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; arm_64; Android 14; 2306EPN60G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.832 YaSearchBrowser/24.74/apad BroPP/1.0 YaSearchApp/24.74/apad webOmni SA/3 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Xiaomi",
+      "model": "13T"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; COLOR 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+    "device": {
+      "type": "smartphone",
+      "brand": "Blackview",
+      "model": "Color 8"
+    }
+  },
+  {
+    "user_agent": "Mozilla/5.0 (Linux; Android 13; VIA A40 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0.6613.88 Mobile Safari/537.36 TwitterAndroid",
+    "device": {
+      "type": "smartphone",
+      "brand": "Casper",
+      "model": "VIA A40"
+    }
+  }
+]
