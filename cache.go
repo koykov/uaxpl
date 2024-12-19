@@ -1,27 +1,17 @@
 package uaxpl
 
 import (
-	"sync"
-	"time"
-
 	"github.com/koykov/bitset"
 	"github.com/koykov/bytealg"
 	"github.com/koykov/entry"
-	"github.com/koykov/hash/fnv"
 )
 
-const (
-	cacheTTL = int64(time.Hour)
-)
-
-type cache struct {
-	o   sync.Once
-	mux sync.Mutex
-	idx map[uint64]int
-	buf []cacheRow
+type Cacher[T any] interface {
+	Set(key string, val T) error
+	Get(string) (T, bool)
 }
 
-type cacheRow struct {
+type cacheEntry struct {
 	bitset.Bitset
 
 	clientType      ClientType
@@ -44,71 +34,7 @@ type cacheRow struct {
 	timestamp int64
 }
 
-func (c *cache) init() {
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	c.idx = make(map[uint64]int)
-	ticker := time.NewTicker(time.Second * 30)
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				c.clean()
-			}
-		}
-	}()
-}
-
-func (c *cache) set(key string, row cacheRow) {
-	c.o.Do(c.init)
-
-	row.hkey = fnv.Hash64String(key)
-	row.timestamp = time.Now().UnixNano()
-
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	if idx, ok := c.idx[row.hkey]; ok {
-		c.buf[idx] = row
-		return
-	}
-	c.buf = append(c.buf, row)
-	c.idx[row.hkey] = len(c.buf) - 1
-}
-
-func (c *cache) get(key string) (*cacheRow, bool) {
-	hkey := fnv.Hash64String(key)
-
-	c.o.Do(c.init)
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	if idx, ok := c.idx[hkey]; ok && idx >= 0 && idx < len(c.buf) {
-		c.buf[idx].timestamp = time.Now().UnixNano()
-		return &c.buf[idx], true
-	}
-	return nil, false
-}
-
-func (c *cache) clean() {
-	now := time.Now().UnixNano()
-	c.o.Do(c.init)
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	for i := 0; i < len(c.buf); i++ {
-		if now-c.buf[i].timestamp > cacheTTL {
-			l := len(c.buf)
-			old := c.buf[i].hkey
-			c.buf[i] = c.buf[l-1]
-			c.buf = c.buf[:l-1]
-			if i < len(c.buf) {
-				// Edge case: has been deleted last item.
-				c.idx[c.buf[i].hkey] = i
-			}
-			delete(c.idx, old)
-		}
-	}
-}
-
-func (r *cacheRow) fromCtx(ctx *Ctx) {
+func (r *cacheEntry) fromCtx(ctx *Ctx) {
 	r.Bitset = ctx.Bitset
 	r.clientType = ctx.clientType
 	r.clientName64 = ctx.clientName64
