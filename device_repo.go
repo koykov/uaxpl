@@ -18434,7 +18434,7 @@ var (
 		regexp.MustCompile(`(?i)Apple-?TV5[C,_]3|Apple TV 4`),
 		regexp.MustCompile(`(?i)Apple-?TV6[C,_]2`),
 		regexp.MustCompile(`(?i)Apple-?TV11[C,_]1`),
-		regexp.MustCompile(`(?i)(?:iTunes-)?Apple[ _]?TV`),
+		regexp.MustCompile(`(?i)(?:iTunes-)?Apple[ _]?TV|Apple\/|(?:Apple-|iTunes-)?[^l][^i][^k][^e][^\s](?:iPad|iPhone)|iPh(?:[0-9]|1[0-4]),[0-9]|CFNetwork|HomePod|AirPlay|Watch ?OS|Watch1,[12]|MDCR_Mac|ICRU_iP(?:ad|hone)|Mac OS X[,;]|macOS,`),
 		regexp.MustCompile(`(?i)iTunes-iPad/[0-9]+(?:\.[0-9]+)* \(([^;]+);`),
 		regexp.MustCompile(`(?i)(?:MDCR_|ICRU_|Apple-)?iPad`),
 		regexp.MustCompile(`(?i)iTunes-iPhone/[0-9]+(?:\.[0-9]+)* \(([^;]+);`),
