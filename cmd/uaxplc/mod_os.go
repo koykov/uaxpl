@@ -31,7 +31,9 @@ type osModule struct{}
 var (
 	// Regexp replaces
 	reReplOS = map[string]string{
-		`(?:iPhone ?OS|iOS(?: Version)?)(?:/|; |,)(\d+[\.\d]+)`: `(?:iPhone ?OS|[\s(]iOS(?: Version)?)(?:/|; |,)(\d+[\.\d]+)`,
+		`(?:iPhone ?OS|iOS(?: Version)?)(?:/|; |,)(\d+[.\d]+)`:                           `(?:iPhone ?OS|[\s(]iOS(?: Version)?)(?:/|; |,)(\d+[\.\d]+)`,
+		`Android-(\d+[.\d]*);`:                                                           `Android[\s\-](\d+[.\d]*);`,
+		`(?:Android API \d+|\d+/tclwebkit(?:\d+[.\d]*)|(?:Android/\d{2}|Android \d{2}))`: `(?:Android API \d+|\d+/tclwebkit(?:\d+[.\d]*)|(?:[^_]Android/\d{2}|Android-\d{2}))`,
 	}
 )
 

@@ -2,7 +2,10 @@ package uaxpl
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -32,12 +35,12 @@ func TestCustomParse(t *testing.T) {
 		return strings.ToLower(a) == strings.ToLower(b)
 	}
 
-	testDS := func(filename string) error {
+	type tlogger interface {
+		Log(args ...any)
+	}
+
+	testRaw := func(l tlogger, contents []byte) (err error) {
 		var ds []customDS
-		contents, err := os.ReadFile(filename)
-		if err != nil {
-			return err
-		}
 		if err = json.Unmarshal(contents, &ds); err != nil {
 			return err
 		}
@@ -89,24 +92,55 @@ func TestCustomParse(t *testing.T) {
 		}
 		return nil
 	}
+	testDS := func(l tlogger, filename string) error {
+		contents, err := os.ReadFile(filename)
+		if err != nil {
+			return err
+		}
+		return testRaw(l, contents)
+	}
+	testRemoteDS := func(l tlogger, uri string) error {
+		pos := strings.LastIndex(uri, "/")
+		if pos == -1 {
+			return fmt.Errorf("invalid uri: %s", uri)
+		}
+		fname := uri[pos+1:]
+		fpath := "/tmp/uaxpl_" + fname
+		if _, err := os.Stat(fpath); errors.Is(err, os.ErrNotExist) {
+			resp, err := http.Get(uri)
+			if err == nil && resp.StatusCode == http.StatusOK {
+				defer func() { _ = resp.Body.Close() }()
+				var contents []byte
+				if contents, err = io.ReadAll(resp.Body); err == nil {
+					err = os.WriteFile(fpath, contents, 0644)
+				}
+			}
+		}
+		contents, err := os.ReadFile(fpath)
+		if err != nil {
+			return err
+		}
+		return testRaw(l, contents)
+	}
+	_ = testRemoteDS
 
 	t.Run("single0", func(t *testing.T) {
-		_ = testDS("testdata/custom/single0.json")
+		_ = testDS(t, "testdata/custom/single0.json")
 	})
 	t.Run("single1", func(t *testing.T) {
-		_ = testDS("testdata/custom/single1.json")
+		_ = testDS(t, "testdata/custom/single1.json")
 	})
 	t.Run("single2", func(t *testing.T) {
-		_ = testDS("testdata/custom/single2.json")
+		_ = testDS(t, "testdata/custom/single2.json")
 	})
 	t.Run("single3", func(t *testing.T) {
-		_ = testDS("testdata/custom/single3.json")
+		_ = testDS(t, "testdata/custom/single3.json")
 	})
 	t.Run("single4", func(t *testing.T) {
-		_ = testDS("testdata/custom/single4.json")
+		_ = testDS(t, "testdata/custom/single4.json")
 	})
 	t.Run("ds0", func(t *testing.T) {
-		_ = testDS("testdata/custom/ds0.json")
+		_ = testDS(t, "testdata/custom/ds0.json")
 	})
 	t.Run("ds1", func(t *testing.T) {
 		var ds []string
@@ -126,11 +160,20 @@ func TestCustomParse(t *testing.T) {
 		}
 	})
 	t.Run("ds2", func(t *testing.T) {
-		_ = testDS("testdata/custom/ds2.json")
+		_ = testDS(t, "testdata/custom/ds2.json")
 	})
 
 	// new brands/models
 	t.Run("ds3", func(t *testing.T) {
-		_ = testDS("testdata/custom/ds3.json")
+		_ = testDS(t, "testdata/custom/ds3.json")
 	})
+
+	// wurfl comparison
+	t.Run("wurfl0", func(t *testing.T) {
+		_ = testRemoteDS(t, "https://github.com/koykov/dataset/raw/refs/heads/master/ua/wurfl0.json")
+	})
+	// too big output
+	// t.Run("wurfl1", func(t *testing.T) {
+	// 	_ = testRemoteDS(t, "https://github.com/koykov/dataset/raw/refs/heads/master/ua/wurfl1.json")
+	// })
 }
