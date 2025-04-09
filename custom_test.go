@@ -122,7 +122,6 @@ func TestCustomParse(t *testing.T) {
 		}
 		return testRaw(l, contents)
 	}
-	_ = testRemoteDS
 
 	t.Run("single0", func(t *testing.T) {
 		_ = testDS(t, "testdata/custom/single0.json")
