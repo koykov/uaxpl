@@ -103,5 +103,6 @@ func normalizeRegex(s string) string {
 			s = strings.Replace(s, ss, sr, 1)
 		}
 	}
+	s = strings.ReplaceAll(s, ")||(", ")|(")
 	return s
 }
