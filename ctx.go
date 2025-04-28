@@ -308,7 +308,7 @@ func (c *Ctx) reset() {
 	c.osVersion.Reset()
 }
 
-func (c *Ctx) fromCache(row *cacheRow) {
+func (c *Ctx) fromCache(row *cacheEntry) {
 	c.Bitset = row.Bitset
 	c.clientType = row.clientType
 	c.clientName64 = row.clientName64
