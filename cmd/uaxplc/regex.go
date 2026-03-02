@@ -85,7 +85,7 @@ func normalizeRegex(s string) string {
 			}
 			ic := io
 			for i := io; i < len(s); i++ {
-				if s[i] == '(' {
+				if s[i] == '(' && s[i-1] != '\\' {
 					bo++
 				}
 				if s[i] == ')' && s[i-1] != '\\' {

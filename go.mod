@@ -7,7 +7,7 @@ require (
 	github.com/koykov/bytealg v1.0.7
 	github.com/koykov/byteconv v1.0.1
 	github.com/koykov/entry v1.0.2
-	github.com/koykov/hash v1.0.0
+	github.com/koykov/hash v1.0.5
 )
 
 require github.com/koykov/byteseq v1.0.1 // indirect
