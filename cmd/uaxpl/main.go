@@ -42,6 +42,7 @@ var (
 	url_    = flag.String("url", "", "URL to remote file with JSON tuples") // URI mode
 	out     = flag.String("out", "out.diff.txt", "Output file")
 	threads = flag.Int("threads", 1, "Number of threads")
+	format  = flag.String("format", "plain", "Output format")
 	verbose = flag.Bool("verbose", false, "Verbose output")
 )
 
