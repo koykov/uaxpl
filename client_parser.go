@@ -23,12 +23,10 @@ func (c *Ctx) parseClient() (ok bool) {
 	}
 	defer func() {
 		c.SetBit(flagClientDetect, true)
-		if ok {
-			// Put result to the cache.
-			var row cacheRow
-			row.fromCtx(c)
-			cache_.set(c.GetUserAgent(), row)
-		}
+		// Put result to the cache.
+		var row cacheRow
+		row.fromCtx(c)
+		cache_.set(c.GetUserAgent(), row)
 	}()
 
 	if c.maskClientType&ClientTypeFeedReader != 0 {
