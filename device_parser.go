@@ -44,20 +44,17 @@ var (
 
 func (c *Ctx) parseDevice() (ok bool) {
 	// Check cached result.
-	row, ok1 := cache_.get(c.GetUserAgent())
-	if ok1 && row.CheckBit(flagDeviceDetect) {
+	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagDeviceDetect) {
 		c.fromCache(row)
 		ok = true
 		return
 	}
 	defer func() {
 		c.SetBit(flagDeviceDetect, true)
-		if ok {
-			// Put result to the cache.
-			var row cacheRow
-			row.fromCtx(c)
-			cache_.set(c.GetUserAgent(), row)
-		}
+		// Put result to the cache.
+		var row cacheRow
+		row.fromCtx(c)
+		cache_.set(c.GetUserAgent(), row)
 	}()
 
 	if c.maskDeviceType&DeviceTypeCamera != 0 {
