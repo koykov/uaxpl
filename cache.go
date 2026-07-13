@@ -1,47 +1,25 @@
 package uaxpl
 
 import (
+	"errors"
 	"sync"
 	"time"
 
-	"github.com/koykov/bitset"
-	"github.com/koykov/bytealg"
-	"github.com/koykov/entry"
 	"github.com/koykov/hash/fnv"
 )
 
-const (
-	cacheTTL = int64(time.Hour)
-)
+const cacheTTL = int64(time.Hour)
+
+type Cache interface {
+	Set(key string, value *CacheEntry) error
+	Get(key string) (*CacheEntry, error)
+}
 
 type cache struct {
 	o   sync.Once
 	mux sync.Mutex
 	idx map[uint64]int
-	buf []cacheRow
-}
-
-type cacheRow struct {
-	bitset.Bitset
-
-	clientType      ClientType
-	clientName64    entry.Entry64
-	clientVersion64 entry.Entry64
-
-	engineName64    entry.Entry64
-	engineVersion64 entry.Entry64
-
-	deviceType  DeviceType
-	brandName64 entry.Entry64
-	modelName64 entry.Entry64
-
-	osName64    entry.Entry64
-	osVersion64 entry.Entry64
-
-	buf []byte
-
-	hkey      uint64
-	timestamp int64
+	buf []*CacheEntry
 }
 
 func (c *cache) init() {
@@ -59,33 +37,34 @@ func (c *cache) init() {
 	}()
 }
 
-func (c *cache) set(key string, row cacheRow) {
+func (c *cache) Set(key string, row *CacheEntry) error {
 	c.o.Do(c.init)
 
-	row.hkey = fnv.Hash64String(key)
-	row.timestamp = time.Now().UnixNano()
+	row.Hkey = fnv.Hash64String(key)
+	row.Timestamp = time.Now().UnixNano()
 
 	c.mux.Lock()
 	defer c.mux.Unlock()
-	if idx, ok := c.idx[row.hkey]; ok {
+	if idx, ok := c.idx[row.Hkey]; ok {
 		c.buf[idx] = row
-		return
+		return nil
 	}
 	c.buf = append(c.buf, row)
-	c.idx[row.hkey] = len(c.buf) - 1
+	c.idx[row.Hkey] = len(c.buf) - 1
+	return nil
 }
 
-func (c *cache) get(key string) (*cacheRow, bool) {
+func (c *cache) Get(key string) (*CacheEntry, error) {
 	hkey := fnv.Hash64String(key)
 
 	c.o.Do(c.init)
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	if idx, ok := c.idx[hkey]; ok && idx >= 0 && idx < len(c.buf) {
-		c.buf[idx].timestamp = time.Now().UnixNano()
-		return &c.buf[idx], true
+		c.buf[idx].Timestamp = time.Now().UnixNano()
+		return c.buf[idx], nil
 	}
-	return nil, false
+	return nil, errCache404
 }
 
 func (c *cache) clean() {
@@ -94,31 +73,18 @@ func (c *cache) clean() {
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	for i := 0; i < len(c.buf); i++ {
-		if now-c.buf[i].timestamp > cacheTTL {
+		if now-c.buf[i].Timestamp > cacheTTL {
 			l := len(c.buf)
-			old := c.buf[i].hkey
+			old := c.buf[i].Hkey
 			c.buf[i] = c.buf[l-1]
 			c.buf = c.buf[:l-1]
 			if i < len(c.buf) {
 				// Edge case: has been deleted last item.
-				c.idx[c.buf[i].hkey] = i
+				c.idx[c.buf[i].Hkey] = i
 			}
 			delete(c.idx, old)
 		}
 	}
 }
 
-func (r *cacheRow) fromCtx(ctx *Ctx) {
-	r.Bitset = ctx.Bitset
-	r.clientType = ctx.clientType
-	r.clientName64 = ctx.clientName64
-	r.clientVersion64 = ctx.clientVersion64
-	r.engineName64 = ctx.engineName64
-	r.engineVersion64 = ctx.engineVersion64
-	r.deviceType = ctx.deviceType
-	r.brandName64 = ctx.brandName64
-	r.modelName64 = ctx.modelName64
-	r.osName64 = ctx.osName64
-	r.osVersion64 = ctx.osVersion64
-	r.buf = bytealg.Copy(ctx.buf)
-}
+var errCache404 = errors.New("entry not found")

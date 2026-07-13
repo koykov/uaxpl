@@ -308,19 +308,19 @@ func (c *Ctx) reset() {
 	c.osVersion.Reset()
 }
 
-func (c *Ctx) fromCache(row *cacheRow) {
+func (c *Ctx) fromCache(row *CacheEntry) {
 	c.Bitset = row.Bitset
-	c.clientType = row.clientType
-	c.clientName64 = row.clientName64
-	c.clientVersion64 = row.clientVersion64
-	c.engineName64 = row.engineName64
-	c.engineVersion64 = row.engineVersion64
-	c.deviceType = row.deviceType
-	c.brandName64 = row.brandName64
-	c.modelName64 = row.modelName64
-	c.osName64 = row.osName64
-	c.osVersion64 = row.osVersion64
-	c.buf = append(c.buf[:0], row.buf...)
+	c.clientType = row.ClientType
+	c.clientName64 = row.ClientName64
+	c.clientVersion64 = row.ClientVersion64
+	c.engineName64 = row.EngineName64
+	c.engineVersion64 = row.EngineVersion64
+	c.deviceType = row.DeviceType
+	c.brandName64 = row.BrandName64
+	c.modelName64 = row.ModelName64
+	c.osName64 = row.OSName64
+	c.osVersion64 = row.OSVersion64
+	c.buf = append(c.buf[:0], row.Data...)
 }
 
 var (
