@@ -44,7 +44,7 @@ func (r *CacheEntry) FromCtx(ctx *Ctx) {
 	r.ModelName64 = ctx.modelName64
 	r.OSName64 = ctx.osName64
 	r.OSVersion64 = ctx.osVersion64
-	r.Data = bytealg.Copy(ctx.buf)
+	r.Data = bytealg.Copy(ctx.src)
 }
 
 func (r *CacheEntry) Size() int {
