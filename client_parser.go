@@ -16,17 +16,17 @@ const (
 
 func (c *Ctx) parseClient() (ok bool) {
 	// Check cached result.
-	if row, ok1 := cache_.get(c.GetUserAgent()); ok1 && row.CheckBit(flagClientDetect) {
-		c.fromCache(row)
+	if e, err := GetCache().Get(c.GetUserAgent()); err == nil && e.CheckBit(flagClientDetect) {
+		c.fromCache(e)
 		ok = true
 		return
 	}
 	defer func() {
 		c.SetBit(flagClientDetect, true)
 		// Put result to the cache.
-		var row cacheRow
-		row.fromCtx(c)
-		cache_.set(c.GetUserAgent(), row)
+		var e CacheEntry
+		e.FromCtx(c)
+		_ = GetCache().Set(c.GetUserAgent(), &e)
 	}()
 
 	if c.maskClientType&ClientTypeFeedReader != 0 {

@@ -44,16 +44,16 @@ var (
 
 func (c *Ctx) parseOS() bool {
 	// Check cached result.
-	if row, ok := cache_.get(c.GetUserAgent()); ok && row.CheckBit(flagOSDetect) {
-		c.fromCache(row)
+	if e, err := GetCache().Get(c.GetUserAgent()); err == nil && e.CheckBit(flagOSDetect) {
+		c.fromCache(e)
 		return true
 	}
 	defer func() {
 		c.SetBit(flagOSDetect, true)
 		// Put result to the cache.
-		var row cacheRow
-		row.fromCtx(c)
-		cache_.set(c.GetUserAgent(), row)
+		var e CacheEntry
+		e.FromCtx(c)
+		_ = GetCache().Set(c.GetUserAgent(), &e)
 	}()
 
 	r := __or_os
